@@ -422,26 +422,16 @@ Below are some representative screens. Full gallery is available under `./screen
 </table>
 
 ### Settings
-<table>
-  <tr>
-    <td><img src="screenshots/Settings/screenshot_1.jpg" width="250" alt="Settings 1"/></td>
-    <td><img src="screenshots/Settings/screenshot_2.jpg" width="250" alt="Settings 2"/></td>
-    <td><img src="screenshots/Settings/screenshot_3.jpg" width="250" alt="Settings 3"/></td>
-  </tr>
-  <tr>
-    <td><img src="screenshots/Settings/screenshot_4.jpg" width="250" alt="Settings 4"/></td>
-    <td><img src="screenshots/Settings/screenshot_5.jpg" width="250" alt="Settings 5"/></td>
-    <td><img src="screenshots/Settings/screenshot_6.jpg" width="250" alt="Settings 6"/></td>
-  </tr>
-  <tr>
-    <td><img src="screenshots/Settings/screenshot_7.jpg" width="250" alt="Settings 7"/></td>
-    <td><img src="screenshots/Settings/screenshot_8.jpg" width="250" alt="Settings 8"/></td>
-    <td><img src="screenshots/Settings/screenshot_9.jpg" width="250" alt="Settings 9"/></td>
-  </tr>
-  <tr>
-    <td><img src="screenshots/Settings/screenshot_10.jpg" width="250" alt="Settings 10"/></td>
-  </tr>
-</table>
+![Settings 1](screenshots/Settings/screenshot_1.jpg)
+![Settings 2](screenshots/Settings/screenshot_2.jpg)
+![Settings 3](screenshots/Settings/screenshot_3.jpg)
+![Settings 4](screenshots/Settings/screenshot_4.jpg)
+![Settings 5](screenshots/Settings/screenshot_5.jpg)
+![Settings 6](screenshots/Settings/screenshot_6.jpg)
+![Settings 7](screenshots/Settings/screenshot_7.jpg)
+![Settings 8](screenshots/Settings/screenshot_8.jpg)
+![Settings 9](screenshots/Settings/screenshot_9.jpg)
+![Settings 10](screenshots/Settings/screenshot_10.jpg)
 
 ## Roadmap
 - Migrate to Riverpod/BLoC (optional)
