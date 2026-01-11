@@ -327,65 +327,121 @@ Common places to configure:
 Below are some representative screens. Full gallery is available under `./screenshots/`.
 
 ### Auth
-![Auth 1](screenshots/Auth/screenshot_1.jpg)
-![Auth 2](screenshots/Auth/screenshot_2.jpg)
-![Auth 3](screenshots/Auth/screenshot_3.jpg)
-![Auth 4](screenshots/Auth/screenshot_4.jpg)
+<table>
+  <tr>
+    <td><img src="screenshots/Auth/screenshot_1.jpg" width="250" alt="Auth 1"/></td>
+    <td><img src="screenshots/Auth/screenshot_2.jpg" width="250" alt="Auth 2"/></td>
+    <td><img src="screenshots/Auth/screenshot_3.jpg" width="250" alt="Auth 3"/></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/Auth/screenshot_4.jpg" width="250" alt="Auth 4"/></td>
+  </tr>
+</table>
 
 ### Home / Timeline
-![Home 1](screenshots/Home/screenshot_1.jpg)
-![Home 2](screenshots/Home/screenshot_2.jpg)
-![Home 3](screenshots/Home/screenshot_3.jpg)
-![Home 4](screenshots/Home/screenshot_4.jpg)
-![Home 5](screenshots/Home/screenshot_5.jpg)
-![Home 6](screenshots/Home/screenshot_6.jpg)
-![Home 7](screenshots/Home/screenshot_7.jpg)
+<table>
+  <tr>
+    <td><img src="screenshots/Home/screenshot_1.jpg" width="250" alt="Home 1"/></td>
+    <td><img src="screenshots/Home/screenshot_2.jpg" width="250" alt="Home 2"/></td>
+    <td><img src="screenshots/Home/screenshot_3.jpg" width="250" alt="Home 3"/></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/Home/screenshot_4.jpg" width="250" alt="Home 4"/></td>
+    <td><img src="screenshots/Home/screenshot_5.jpg" width="250" alt="Home 5"/></td>
+    <td><img src="screenshots/Home/screenshot_6.jpg" width="250" alt="Home 6"/></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/Home/screenshot_7.jpg" width="250" alt="Home 7"/></td>
+  </tr>
+</table>
 
 ### Tweet Detail
-![Tweet 1](screenshots/TweetDetail/screenshot_1.jpg)
-![Tweet 2](screenshots/TweetDetail/screenshot_2.jpg)
-![Tweet 3](screenshots/TweetDetail/screenshot_3.jpg)
-![Tweet 4](screenshots/TweetDetail/screenshot_4.jpg)
-![Tweet 5](screenshots/TweetDetail/screenshot_5.jpg)
-![Tweet 6](screenshots/TweetDetail/screenshot_6.jpg)
-![Tweet 7](screenshots/TweetDetail/screenshot_7.jpg)
+<table>
+  <tr>
+    <td><img src="screenshots/TweetDetail/screenshot_1.jpg" width="250" alt="Tweet 1"/></td>
+    <td><img src="screenshots/TweetDetail/screenshot_2.jpg" width="250" alt="Tweet 2"/></td>
+    <td><img src="screenshots/TweetDetail/screenshot_3.jpg" width="250" alt="Tweet 3"/></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/TweetDetail/screenshot_4.jpg" width="250" alt="Tweet 4"/></td>
+    <td><img src="screenshots/TweetDetail/screenshot_5.jpg" width="250" alt="Tweet 5"/></td>
+    <td><img src="screenshots/TweetDetail/screenshot_6.jpg" width="250" alt="Tweet 6"/></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/TweetDetail/screenshot_7.jpg" width="250" alt="Tweet 7"/></td>
+  </tr>
+</table>
 
 ### Chat
-![Chat 1](screenshots/Chat/screenshot_1.jpg)
-![Chat 2](screenshots/Chat/screenshot_2.jpg)
-![Chat 3](screenshots/Chat/screenshot_3.jpg)
-![Chat 4](screenshots/Chat/screenshot_4.jpg)
+<table>
+  <tr>
+    <td><img src="screenshots/Chat/screenshot_1.jpg" width="250" alt="Chat 1"/></td>
+    <td><img src="screenshots/Chat/screenshot_2.jpg" width="250" alt="Chat 2"/></td>
+    <td><img src="screenshots/Chat/screenshot_3.jpg" width="250" alt="Chat 3"/></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/Chat/screenshot_4.jpg" width="250" alt="Chat 4"/></td>
+  </tr>
+</table>
 
 ### Notifications
-![Notifications 1](screenshots/Notification/screenshot_1.jpg)
-![Notifications 2](screenshots/Notification/screenshot_2.jpg)
-![Notifications 3](screenshots/Notification/screenshot_3.jpg)
-![Notifications 4](screenshots/Notification/screenshot_4.jpg)
+<table>
+  <tr>
+    <td><img src="screenshots/Notification/screenshot_1.jpg" width="250" alt="Notifications 1"/></td>
+    <td><img src="screenshots/Notification/screenshot_2.jpg" width="250" alt="Notifications 2"/></td>
+    <td><img src="screenshots/Notification/screenshot_3.jpg" width="250" alt="Notifications 3"/></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/Notification/screenshot_4.jpg" width="250" alt="Notifications 4"/></td>
+  </tr>
+</table>
 
 ### Profile
-![Profile 1](screenshots/Profile/screenshot_1.jpg)
-![Profile 2](screenshots/Profile/screenshot_2.jpg)
-![Profile 3](screenshots/Profile/screenshot_3.jpg)
-![Profile 4](screenshots/Profile/screenshot_4.jpg)
-![Profile 5](screenshots/Profile/screenshot_5.jpg)
-![Profile 6](screenshots/Profile/screenshot_6.jpg)
-![Profile 7](screenshots/Profile/screenshot_7.jpg)
+<table>
+  <tr>
+    <td><img src="screenshots/Profile/screenshot_1.jpg" width="250" alt="Profile 1"/></td>
+    <td><img src="screenshots/Profile/screenshot_2.jpg" width="250" alt="Profile 2"/></td>
+    <td><img src="screenshots/Profile/screenshot_3.jpg" width="250" alt="Profile 3"/></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/Profile/screenshot_4.jpg" width="250" alt="Profile 4"/></td>
+    <td><img src="screenshots/Profile/screenshot_5.jpg" width="250" alt="Profile 5"/></td>
+    <td><img src="screenshots/Profile/screenshot_6.jpg" width="250" alt="Profile 6"/></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/Profile/screenshot_7.jpg" width="250" alt="Profile 7"/></td>
+  </tr>
+</table>
 
 ### Search
-![Search 1](screenshots/Search/screenshot_1.jpg)
-![Search 2](screenshots/Search/screenshot_2.jpg)
+<table>
+  <tr>
+    <td><img src="screenshots/Search/screenshot_1.jpg" width="250" alt="Search 1"/></td>
+    <td><img src="screenshots/Search/screenshot_2.jpg" width="250" alt="Search 2"/></td>
+  </tr>
+</table>
 
 ### Settings
-![Settings 1](screenshots/Settings/screenshot_1.jpg)
-![Settings 2](screenshots/Settings/screenshot_2.jpg)
-![Settings 3](screenshots/Settings/screenshot_3.jpg)
-![Settings 4](screenshots/Settings/screenshot_4.jpg)
-![Settings 5](screenshots/Settings/screenshot_5.jpg)
-![Settings 6](screenshots/Settings/screenshot_6.jpg)
-![Settings 7](screenshots/Settings/screenshot_7.jpg)
-![Settings 8](screenshots/Settings/screenshot_8.jpg)
-![Settings 9](screenshots/Settings/screenshot_9.jpg)
-![Settings 10](screenshots/Settings/screenshot_10.jpg)
+<table>
+  <tr>
+    <td><img src="screenshots/Settings/screenshot_1.jpg" width="250" alt="Settings 1"/></td>
+    <td><img src="screenshots/Settings/screenshot_2.jpg" width="250" alt="Settings 2"/></td>
+    <td><img src="screenshots/Settings/screenshot_3.jpg" width="250" alt="Settings 3"/></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/Settings/screenshot_4.jpg" width="250" alt="Settings 4"/></td>
+    <td><img src="screenshots/Settings/screenshot_5.jpg" width="250" alt="Settings 5"/></td>
+    <td><img src="screenshots/Settings/screenshot_6.jpg" width="250" alt="Settings 6"/></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/Settings/screenshot_7.jpg" width="250" alt="Settings 7"/></td>
+    <td><img src="screenshots/Settings/screenshot_8.jpg" width="250" alt="Settings 8"/></td>
+    <td><img src="screenshots/Settings/screenshot_9.jpg" width="250" alt="Settings 9"/></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/Settings/screenshot_10.jpg" width="250" alt="Settings 10"/></td>
+  </tr>
+</table>
 
 ## Roadmap
 - Migrate to Riverpod/BLoC (optional)
