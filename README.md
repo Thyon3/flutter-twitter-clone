@@ -376,8 +376,8 @@ Below are some representative screens. Full gallery is available under `./screen
 ![Search 2](screenshots/Search/screenshot_2.jpg)
 
 ### Settings
-![Settings 1](screenshots/Settings/screenshot_1.jpg)
-![Settings 2](screenshots/Settings/screenshot_2.jpg)
+![Settings 1](screenshots/Settings/screenshot_1.jpg)    ![Settings 2](screenshots/Settings/screenshot_2.jpg)
+
 ![Settings 3](screenshots/Settings/screenshot_3.jpg)
 ![Settings 4](screenshots/Settings/screenshot_4.jpg)
 ![Settings 5](screenshots/Settings/screenshot_5.jpg)
