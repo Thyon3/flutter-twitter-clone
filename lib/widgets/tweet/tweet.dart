@@ -13,6 +13,7 @@ import 'package:twitterclone/widgets/newWidget/title_text.dart';
 import 'package:twitterclone/widgets/tweet/widgets/parentTweet.dart';
 import 'package:twitterclone/widgets/tweet/widgets/tweetIconsRow.dart';
 import 'package:twitterclone/widgets/tweet/thread_indicator.dart';
+import 'package:twitterclone/widgets/tweet/poll_widget.dart';
 import 'package:twitterclone/widgets/url_text/customUrlText.dart';
 import 'package:twitterclone/widgets/url_text/custom_link_media_info.dart';
 import 'package:provider/provider.dart';
@@ -291,6 +292,16 @@ class _TweetBody extends StatelessWidget {
               if (model.imagePath == null && model.description != null)
                 CustomLinkMediaInfo(text: model.description!),
               
+              // Poll widget
+              if (model.hasPoll)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: PollWidget(
+                    poll: model.poll!,
+                    isCompact: type != TweetType.Detail,
+                  ),
+                ),
+              
               // Thread indicator
               if (showThreadIndicator && model.isPartOfThread && !isThreadView)
                 Padding(
@@ -427,6 +438,16 @@ class _TweetDetailBody extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: CustomLinkMediaInfo(text: model.description!),
+                ),
+              
+              // Poll widget for detail view
+              if (model.hasPoll)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: PollWidget(
+                    poll: model.poll!,
+                    isCompact: false,
+                  ),
                 )
             ],
           ),
