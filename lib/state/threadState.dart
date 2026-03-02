@@ -18,6 +18,12 @@ class ThreadState extends TweetBaseState {
   bool get isLoadingThread => _isLoadingThread;
   String? get currentThreadId => _currentThreadId;
   
+  /// Get current user from AuthState
+  UserModel get getCurrentUser {
+    final authState = AuthState();
+    return authState.userModel ?? UserModel();
+  }
+  
   /// Load a complete thread by thread ID
   Future<void> loadThread(String threadId) async {
     _isLoadingThread = true;
