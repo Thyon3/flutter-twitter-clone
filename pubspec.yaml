@@ -50,6 +50,7 @@ dependencies:
   qr_flutter: ^4.1.0
   rxdart: ^0.28.0
   translator: ^1.0.0
+  http: ^1.1.0
   # link_preview_generator: ^1.2.0
 
 dev_dependencies:
