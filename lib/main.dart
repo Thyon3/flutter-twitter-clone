@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import 'package:twitterclone/state/searchState.dart';
+import 'package:twitterclone/state/threadState.dart';
 import 'package:twitterclone/ui/page/common/locator.dart';
 import 'package:twitterclone/ui/theme/theme.dart';
 
@@ -38,6 +39,8 @@ class MyApp extends StatelessWidget {
             create: (_) => NotificationState()),
         ChangeNotifierProvider<SuggestionsState>(
             create: (_) => SuggestionsState()),
+        ChangeNotifierProvider<ThreadState>(
+            create: (_) => ThreadState()),
       ],
       child: MaterialApp(
         title: 'Fwitter',
