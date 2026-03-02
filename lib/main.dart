@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import 'package:twitterclone/state/searchState.dart';
 import 'package:twitterclone/state/threadState.dart';
+import 'package:twitterclone/state/quoteTweetState.dart';
 import 'package:twitterclone/ui/page/common/locator.dart';
 import 'package:twitterclone/ui/theme/theme.dart';
 
@@ -41,6 +42,8 @@ class MyApp extends StatelessWidget {
             create: (_) => SuggestionsState()),
         ChangeNotifierProvider<ThreadState>(
             create: (_) => ThreadState()),
+        ChangeNotifierProvider<QuoteTweetState>(
+            create: (_) => QuoteTweetState()),
       ],
       child: MaterialApp(
         title: 'Fwitter',
