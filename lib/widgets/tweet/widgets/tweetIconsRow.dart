@@ -6,6 +6,7 @@ import 'package:twitterclone/model/feedModel.dart';
 import 'package:twitterclone/state/authState.dart';
 import 'package:twitterclone/state/feedState.dart';
 import 'package:twitterclone/ui/page/common/usersListPage.dart';
+import 'package:twitterclone/ui/page/feed/composeQuoteTweet.dart';
 import 'package:twitterclone/ui/theme/theme.dart';
 import 'package:twitterclone/widgets/customWidgets.dart';
 import 'package:twitterclone/widgets/tweet/widgets/tweetBottomSheet.dart';
@@ -75,6 +76,22 @@ class TweetIconsRow extends StatelessWidget {
                 model.likeList!.any((userId) => userId == authState.userId)
                     ? iconEnableColor
                     : iconColor,
+            size: size ?? 20,
+          ),
+          _iconWidget(
+            context,
+            text: '',
+            icon: null,
+            sysIcon: Icons.format_quote,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ComposeQuoteTweetPage(quotedTweet: model),
+                ),
+              );
+            },
+            iconColor: iconColor,
             size: size ?? 20,
           ),
           _iconWidget(context, text: '', icon: null, sysIcon: Icons.share,
