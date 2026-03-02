@@ -18,6 +18,13 @@ class ThreadViewPage extends StatefulWidget {
     this.initialTweet,
   }) : super(key: key);
 
+  static Route getRoute(String threadId) {
+    return MaterialPageRoute(
+      settings: const RouteSettings(name: '/ThreadViewPage'),
+      builder: (context) => ThreadViewPage(threadId: threadId),
+    );
+  }
+
   @override
   _ThreadViewPageState createState() => _ThreadViewPageState();
 }

@@ -3,13 +3,16 @@ import 'package:twitterclone/helper/enum.dart';
 import 'package:twitterclone/helper/utility.dart';
 import 'package:twitterclone/model/feedModel.dart';
 import 'package:twitterclone/state/feedState.dart';
+import 'package:twitterclone/state/threadState.dart';
 import 'package:twitterclone/ui/page/feed/feedPostDetail.dart';
+import 'package:twitterclone/ui/page/feed/threadViewPage.dart';
 import 'package:twitterclone/ui/page/profile/profilePage.dart';
 import 'package:twitterclone/ui/page/profile/widgets/circular_image.dart';
 import 'package:twitterclone/ui/theme/theme.dart';
 import 'package:twitterclone/widgets/newWidget/title_text.dart';
 import 'package:twitterclone/widgets/tweet/widgets/parentTweet.dart';
 import 'package:twitterclone/widgets/tweet/widgets/tweetIconsRow.dart';
+import 'package:twitterclone/widgets/tweet/thread_indicator.dart';
 import 'package:twitterclone/widgets/url_text/customUrlText.dart';
 import 'package:twitterclone/widgets/url_text/custom_link_media_info.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +27,9 @@ class Tweet extends StatelessWidget {
   final TweetType type;
   final bool isDisplayOnProfile;
   final GlobalKey<ScaffoldState> scaffoldKey;
+  final bool isThreadView;
+  final bool showThreadIndicator;
+  
   const Tweet({
     Key? key,
     required this.model,
@@ -31,6 +37,8 @@ class Tweet extends StatelessWidget {
     this.type = TweetType.Tweet,
     this.isDisplayOnProfile = false,
     required this.scaffoldKey,
+    this.isThreadView = false,
+    this.showThreadIndicator = true,
   }) : super(key: key);
 
   void onLongPressedTweet(BuildContext context) {
@@ -44,6 +52,16 @@ class Tweet extends StatelessWidget {
 
   void onTapTweet(BuildContext context) {
     var feedState = Provider.of<FeedState>(context, listen: false);
+    
+    // If this is a thread and not in thread view, navigate to thread view
+    if (model.isPartOfThread && !isThreadView) {
+      Navigator.push(
+        context, 
+        ThreadViewPage.getRoute(model.threadId!),
+      );
+      return;
+    }
+    
     if (type == TweetType.Detail || type == TweetType.ParentTweet) {
       return;
     }
@@ -93,10 +111,12 @@ class Tweet extends StatelessWidget {
                 ),
                 child: type == TweetType.Tweet || type == TweetType.Reply
                     ? _TweetBody(
-                        isDisplayOnProfile: isDisplayOnProfile,
                         model: model,
                         trailing: trailing,
                         type: type,
+                        isDisplayOnProfile: isDisplayOnProfile,
+                        isThreadView: isThreadView,
+                        showThreadIndicator: showThreadIndicator,
                       )
                     : _TweetDetailBody(
                         model: model,
@@ -148,12 +168,17 @@ class _TweetBody extends StatelessWidget {
   final Widget? trailing;
   final TweetType type;
   final bool isDisplayOnProfile;
+  final bool isThreadView;
+  final bool showThreadIndicator;
+  
   const _TweetBody(
       {Key? key,
       required this.model,
       this.trailing,
       required this.type,
-      required this.isDisplayOnProfile})
+      required this.isDisplayOnProfile,
+      this.isThreadView = false,
+      this.showThreadIndicator = true})
       : super(key: key);
 
   @override
@@ -265,6 +290,21 @@ class _TweetBody extends StatelessWidget {
                     ),
               if (model.imagePath == null && model.description != null)
                 CustomLinkMediaInfo(text: model.description!),
+              
+              // Thread indicator
+              if (showThreadIndicator && model.isPartOfThread && !isThreadView)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: ThreadIndicator(
+                    tweet: model,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        ThreadViewPage.getRoute(model.threadId!),
+                      );
+                    },
+                  ),
+                ),
             ],
           ),
         ),
