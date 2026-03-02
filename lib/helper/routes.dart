@@ -6,6 +6,7 @@ import 'package:twitterclone/ui/page/Auth/verifyEmail.dart';
 import 'package:twitterclone/ui/page/common/splash.dart';
 import 'package:twitterclone/ui/page/feed/composeTweet/composeTweet.dart';
 import 'package:twitterclone/ui/page/feed/composeTweet/state/composeTweetState.dart';
+import 'package:twitterclone/ui/page/feed/threadViewPage.dart';
 import 'package:twitterclone/ui/page/homePage.dart';
 import 'package:twitterclone/ui/page/message/conversationInformation/conversationInformation.dart';
 import 'package:twitterclone/ui/page/message/newMessagePage.dart';
@@ -178,6 +179,11 @@ class Routes {
       case "VerifyEmailPage":
         return CustomRoute<bool>(
           builder: (BuildContext context) => VerifyEmailPage(),
+        );
+      case "ThreadViewPage":
+        String threadId = pathElements.length > 2 ? pathElements[2] : '';
+        return CustomRoute<bool>(
+          builder: (BuildContext context) => ThreadViewPage(threadId: threadId),
         );
       default:
         return onUnknownRoute(const RouteSettings(name: '/Feature'));
