@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:twitterclone/model/user.dart';
+import 'package:twitterclone/model/pollModel.dart';
 
 class FeedModel {
   String? key;
@@ -28,6 +29,9 @@ class FeedModel {
   bool? isThreadEnd; // Is this the last tweet in a thread
   String? threadAuthorId; // Author of the thread (for multi-author threads)
   
+  // Poll support
+  PollModel? poll;
+  
   FeedModel(
       {this.key,
       this.description,
@@ -49,7 +53,8 @@ class FeedModel {
       this.threadTotalCount,
       this.isThreadStart,
       this.isThreadEnd,
-      this.threadAuthorId});
+      this.threadAuthorId,
+      this.poll});
   toJson() {
     return {
       "userId": userId,
@@ -71,7 +76,8 @@ class FeedModel {
       "threadTotalCount": threadTotalCount,
       "isThreadStart": isThreadStart,
       "isThreadEnd": isThreadEnd,
-      "threadAuthorId": threadAuthorId
+      "threadAuthorId": threadAuthorId,
+      "poll": poll?.toJson(),
     };
   }
 
@@ -97,6 +103,11 @@ class FeedModel {
     isThreadStart = map['isThreadStart'];
     isThreadEnd = map['isThreadEnd'];
     threadAuthorId = map['threadAuthorId'];
+    
+    // Poll support
+    if (map['poll'] != null) {
+      poll = PollModel.fromJson(map['poll']);
+    }
     if (map['tags'] != null) {
       tags = <String>[];
       map['tags'].forEach((value) {
@@ -196,5 +207,20 @@ class FeedModel {
     return isPartOfThread && 
            !isThreadLast! && 
            (threadAuthorId == userId || this.userId == userId);
+  }
+
+  /// Check if this tweet contains a poll
+  bool get hasPoll {
+    return poll != null;
+  }
+
+  /// Check if user can vote in the poll
+  bool canUserVoteInPoll(String userId) {
+    return hasPoll && poll!.canUserVote(userId);
+  }
+
+  /// Check if user has voted in the poll
+  bool hasUserVotedInPoll(String userId) {
+    return hasPoll && poll!.hasUserVoted(userId);
   }
 }
