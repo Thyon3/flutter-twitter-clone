@@ -19,6 +19,15 @@ class FeedModel {
   String?
       lanCode; //Saving the language of the tweet so to not translate to check which language
   UserModel? user;
+  
+  // Thread support fields
+  String? threadId; // ID to group all tweets in a thread
+  int? threadPosition; // Position of this tweet in the thread (0, 1, 2...)
+  int? threadTotalCount; // Total number of tweets in this thread
+  bool? isThreadStart; // Is this the first tweet in a thread
+  bool? isThreadEnd; // Is this the last tweet in a thread
+  String? threadAuthorId; // Author of the thread (for multi-author threads)
+  
   FeedModel(
       {this.key,
       this.description,
@@ -34,7 +43,13 @@ class FeedModel {
       this.replyTweetKeyList,
       this.parentkey,
       this.lanCode,
-      this.childRetwetkey});
+      this.childRetwetkey,
+      this.threadId,
+      this.threadPosition,
+      this.threadTotalCount,
+      this.isThreadStart,
+      this.isThreadEnd,
+      this.threadAuthorId});
   toJson() {
     return {
       "userId": userId,
@@ -50,7 +65,13 @@ class FeedModel {
       "user": user == null ? null : user!.toJson(),
       "parentkey": parentkey,
       "lanCode": lanCode,
-      "childRetwetkey": childRetwetkey
+      "childRetwetkey": childRetwetkey,
+      "threadId": threadId,
+      "threadPosition": threadPosition,
+      "threadTotalCount": threadTotalCount,
+      "isThreadStart": isThreadStart,
+      "isThreadEnd": isThreadEnd,
+      "threadAuthorId": threadAuthorId
     };
   }
 
@@ -68,6 +89,14 @@ class FeedModel {
     user = UserModel.fromJson(map['user']);
     parentkey = map['parentkey'];
     childRetwetkey = map['childRetwetkey'];
+    
+    // Thread support fields
+    threadId = map['threadId'];
+    threadPosition = map['threadPosition'];
+    threadTotalCount = map['threadTotalCount'];
+    isThreadStart = map['isThreadStart'];
+    isThreadEnd = map['isThreadEnd'];
+    threadAuthorId = map['threadAuthorId'];
     if (map['tags'] != null) {
       tags = <String>[];
       map['tags'].forEach((value) {
@@ -137,5 +166,35 @@ class FeedModel {
     } else {
       return key!;
     }
+  }
+
+  /// Check if this tweet is part of a thread
+  bool get isPartOfThread {
+    return threadId != null && threadId!.isNotEmpty;
+  }
+
+  /// Check if this is a thread starter tweet
+  bool get isThreadStarter {
+    return isThreadStart == true;
+  }
+
+  /// Check if this is the last tweet in a thread
+  bool get isThreadLast {
+    return isThreadEnd == true;
+  }
+
+  /// Get thread position display text (e.g., "1/5")
+  String? get threadPositionText {
+    if (isPartOfThread && threadPosition != null && threadTotalCount != null) {
+      return "${threadPosition! + 1}/$threadTotalCount";
+    }
+    return null;
+  }
+
+  /// Check if user can add to this thread
+  bool canUserAddToThread(String userId) {
+    return isPartOfThread && 
+           !isThreadLast! && 
+           (threadAuthorId == userId || this.userId == userId);
   }
 }
