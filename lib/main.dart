@@ -8,6 +8,7 @@ import 'package:twitterclone/state/searchState.dart';
 import 'package:twitterclone/state/threadState.dart';
 import 'package:twitterclone/state/quoteTweetState.dart';
 import 'package:twitterclone/state/pollState.dart';
+import 'package:twitterclone/state/gifState.dart';
 import 'package:twitterclone/ui/page/common/locator.dart';
 import 'package:twitterclone/ui/theme/theme.dart';
 
@@ -47,6 +48,8 @@ class MyApp extends StatelessWidget {
             create: (_) => QuoteTweetState()),
         ChangeNotifierProvider<PollState>(
             create: (_) => PollState()),
+        ChangeNotifierProvider<GifState>(
+            create: (_) => GifState()),
       ],
       child: MaterialApp(
         title: 'Fwitter',
