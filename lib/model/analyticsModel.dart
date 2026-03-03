@@ -397,3 +397,193 @@ class AnalyticsSummary {
     return ((current - previous) / previous) * 100;
   }
 }
+
+class TweetAnalytics {
+  final String tweetId;
+  final Map<AnalyticsMetric, int> metrics;
+  final List<AnalyticsDataPoint> hourlyData;
+  final List<AnalyticsDataPoint> dailyData;
+  final Map<String, int> topCountries;
+  final Map<String, int> topCities;
+  final Map<String, int> topDevices;
+  final Map<String, int> topSources;
+  final DateTime createdAt;
+  final DateTime lastUpdated;
+  
+  TweetAnalytics({
+    required this.tweetId,
+    required this.metrics,
+    required this.hourlyData,
+    required this.dailyData,
+    required this.topCountries,
+    required this.topCities,
+    required this.topDevices,
+    required this.topSources,
+    required this.createdAt,
+    required this.lastUpdated,
+  });
+  
+  factory TweetAnalytics.fromJson(Map<String, dynamic> json) {
+    final tweetId = json['tweetId'] as String;
+    final metrics = <AnalyticsMetric, int>{};
+    final hourlyData = <AnalyticsDataPoint>[];
+    final dailyData = <AnalyticsDataPoint>[];
+    final topCountries = <String, int>{};
+    final topCities = <String, int>{};
+    final topDevices = <String, int>{};
+    final topSources = <String, int>{};
+    
+    if (json['metrics'] != null) {
+      final metricsMap = json['metrics'] as Map<String, dynamic>;
+      for (final entry in metricsMap.entries) {
+        final metric = AnalyticsMetricExtension.fromString(entry.key);
+        metrics[metric] = entry.value as int;
+      }
+    }
+    
+    if (json['hourlyData'] != null) {
+      final hourlyList = json['hourlyData'] as List;
+      for (final item in hourlyList) {
+        hourlyData.add(AnalyticsDataPoint.fromJson(item));
+      }
+    }
+    
+    if (json['dailyData'] != null) {
+      final dailyList = json['dailyData'] as List;
+      for (final item in dailyList) {
+        dailyData.add(AnalyticsDataPoint.fromJson(item));
+      }
+    }
+    
+    if (json['topCountries'] != null) {
+      final countriesMap = json['topCountries'] as Map<String, dynamic>;
+      for (final entry in countriesMap.entries) {
+        topCountries[entry.key] = entry.value as int;
+      }
+    }
+    
+    if (json['topCities'] != null) {
+      final citiesMap = json['topCities'] as Map<String, dynamic>;
+      for (final entry in citiesMap.entries) {
+        topCities[entry.key] = entry.value as int;
+      }
+    }
+    
+    if (json['topDevices'] != null) {
+      final devicesMap = json['topDevices'] as Map<String, dynamic>;
+      for (final entry in devicesMap.entries) {
+        topDevices[entry.key] = entry.value as int;
+      }
+    }
+    
+    if (json['topSources'] != null) {
+      final sourcesMap = json['topSources'] as Map<String, dynamic>;
+      for (final entry in sourcesMap.entries) {
+        topSources[entry.key] = entry.value as int;
+      }
+    }
+    
+    return TweetAnalytics(
+      tweetId: tweetId,
+      metrics: metrics,
+      hourlyData: hourlyData,
+      dailyData: dailyData,
+      topCountries: topCountries,
+      topCities: topCities,
+      topDevices: topDevices,
+      topSources: topSources,
+      createdAt: DateTime.parse(json['createdAt']),
+      lastUpdated: DateTime.parse(json['lastUpdated']),
+    );
+  }
+  
+  Map<String, dynamic> toJson() {
+    return {
+      'tweetId': tweetId,
+      'metrics': metrics.map((key, value) => MapEntry(key.name, value)),
+      'hourlyData': hourlyData.map((item) => item.toJson()).toList(),
+      'dailyData': dailyData.map((item) => item.toJson()).toList(),
+      'topCountries': topCountries,
+      'topCities': topCities,
+      'topDevices': topDevices,
+      'topSources': topSources,
+      'createdAt': createdAt.toIso8601String(),
+      'lastUpdated': lastUpdated.toIso8601String(),
+    };
+  }
+  
+  int? getMetric(AnalyticsMetric metric) {
+    return metrics[metric];
+  }
+  
+  void setMetric(AnalyticsMetric metric, int value) {
+    metrics[metric] = value;
+  }
+  
+  List<AnalyticsDataPoint> getDataForPeriod(AnalyticsPeriod period) {
+    switch (period) {
+      case AnalyticsPeriod.today:
+        return hourlyData.where((point) => 
+          point.timestamp.isAfter(DateTime.now().subtract(Duration(days: 1)))
+        ).toList();
+      case AnalyticsPeriod.week:
+        return dailyData.where((point) => 
+          point.timestamp.isAfter(DateTime.now().subtract(Duration(days: 7)))
+        ).toList();
+      case AnalyticsPeriod.month:
+        return dailyData.where((point) => 
+          point.timestamp.isAfter(DateTime.now().subtract(Duration(days: 30)))
+        ).toList();
+      case AnalyticsPeriod.quarter:
+        return dailyData.where((point) => 
+          point.timestamp.isAfter(DateTime.now().subtract(Duration(days: 90)))
+        ).toList();
+      case AnalyticsPeriod.year:
+        return dailyData.where((point) => 
+          point.timestamp.isAfter(DateTime.now().subtract(Duration(days: 365)))
+        ).toList();
+      case AnalyticsPeriod.all:
+        return dailyData;
+    }
+  }
+  
+  double getEngagementRate() {
+    final impressions = metrics[AnalyticsMetric.impressions] ?? 0;
+    final engagements = metrics[AnalyticsMetric.engagements] ?? 0;
+    
+    if (impressions == 0) return 0.0;
+    return (engagements / impressions) * 100;
+  }
+  
+  Map<String, int> getTopCountries({int limit = 10}) {
+    final sorted = Map.fromEntries(
+      topCountries.entries.toList()
+        ..sort((a, b) => b.value.compareTo(a.value))
+    );
+    return Map.fromEntries(sorted.entries.take(limit));
+  }
+  
+  Map<String, int> getTopCities({int limit = 10}) {
+    final sorted = Map.fromEntries(
+      topCities.entries.toList()
+        ..sort((a, b) => b.value.compareTo(a.value))
+    );
+    return Map.fromEntries(sorted.entries.take(limit));
+  }
+  
+  Map<String, int> getTopDevices({int limit = 5}) {
+    final sorted = Map.fromEntries(
+      topDevices.entries.toList()
+        ..sort((a, b) => b.value.compareTo(a.value))
+    );
+    return Map.fromEntries(sorted.entries.take(limit));
+  }
+  
+  Map<String, int> getTopSources({int limit = 5}) {
+    final sorted = Map.fromEntries(
+      topSources.entries.toList()
+        ..sort((a, b) => b.value.compareTo(a.value))
+    );
+    return Map.fromEntries(sorted.entries.take(limit));
+  }
+}
