@@ -587,3 +587,256 @@ class TweetAnalytics {
     return Map.fromEntries(sorted.entries.take(limit));
   }
 }
+
+class UserAnalytics {
+  final String userId;
+  final Map<AnalyticsPeriod, AnalyticsSummary> summaries;
+  final List<AnalyticsDataPoint> dailyData;
+  final List<AnalyticsDataPoint> weeklyData;
+  final List<AnalyticsDataPoint> monthlyData;
+  final Map<String, TweetAnalytics> tweetAnalytics;
+  final Map<String, int> topPerformingTweets;
+  final Map<String, int> followerGrowth;
+  final Map<String, int> engagementTrends;
+  final Map<String, double> hashtagPerformance;
+  final Map<String, int> mentionAnalytics;
+  final DateTime createdAt;
+  final DateTime lastUpdated;
+  
+  UserAnalytics({
+    required this.userId,
+    required this.summaries,
+    required this.dailyData,
+    required this.weeklyData,
+    required this.monthlyData,
+    required this.tweetAnalytics,
+    required this.topPerformingTweets,
+    required this.followerGrowth,
+    required this.engagementTrends,
+    required this.hashtagPerformance,
+    required this.mentionAnalytics,
+    required this.createdAt,
+    required this.lastUpdated,
+  });
+  
+  factory UserAnalytics.fromJson(Map<String, dynamic> json) {
+    final userId = json['userId'] as String;
+    final summaries = <AnalyticsPeriod, AnalyticsSummary>{};
+    final dailyData = <AnalyticsDataPoint>[];
+    final weeklyData = <AnalyticsDataPoint>[];
+    final monthlyData = <AnalyticsDataPoint>[];
+    final tweetAnalytics = <String, TweetAnalytics>{};
+    final topPerformingTweets = <String, int>{};
+    final followerGrowth = <String, int>{};
+    final engagementTrends = <String, int>{};
+    final hashtagPerformance = <String, double>{};
+    final mentionAnalytics = <String, int>{};
+    
+    if (json['summaries'] != null) {
+      final summariesMap = json['summaries'] as Map<String, dynamic>;
+      for (final entry in summariesMap.entries) {
+        final period = AnalyticsPeriodExtension.fromString(entry.key);
+        summaries[period] = AnalyticsSummary.fromJson(entry.value);
+      }
+    }
+    
+    if (json['dailyData'] != null) {
+      final dailyList = json['dailyData'] as List;
+      for (final item in dailyList) {
+        dailyData.add(AnalyticsDataPoint.fromJson(item));
+      }
+    }
+    
+    if (json['weeklyData'] != null) {
+      final weeklyList = json['weeklyData'] as List;
+      for (final item in weeklyList) {
+        weeklyData.add(AnalyticsDataPoint.fromJson(item));
+      }
+    }
+    
+    if (json['monthlyData'] != null) {
+      final monthlyList = json['monthlyData'] as List;
+      for (final item in monthlyList) {
+        monthlyData.add(AnalyticsDataPoint.fromJson(item));
+      }
+    }
+    
+    if (json['tweetAnalytics'] != null) {
+      final tweetsMap = json['tweetAnalytics'] as Map<String, dynamic>;
+      for (final entry in tweetsMap.entries) {
+        tweetAnalytics[entry.key] = TweetAnalytics.fromJson(entry.value);
+      }
+    }
+    
+    if (json['topPerformingTweets'] != null) {
+      final topTweetsMap = json['topPerformingTweets'] as Map<String, dynamic>;
+      for (final entry in topTweetsMap.entries) {
+        topPerformingTweets[entry.key] = entry.value as int;
+      }
+    }
+    
+    if (json['followerGrowth'] != null) {
+      final growthMap = json['followerGrowth'] as Map<String, dynamic>;
+      for (final entry in growthMap.entries) {
+        followerGrowth[entry.key] = entry.value as int;
+      }
+    }
+    
+    if (json['engagementTrends'] != null) {
+      final trendsMap = json['engagementTrends'] as Map<String, dynamic>;
+      for (final entry in trendsMap.entries) {
+        engagementTrends[entry.key] = entry.value as int;
+      }
+    }
+    
+    if (json['hashtagPerformance'] != null) {
+      final hashtagMap = json['hashtagPerformance'] as Map<String, dynamic>;
+      for (final entry in hashtagMap.entries) {
+        hashtagPerformance[entry.key] = (entry.value as num).toDouble();
+      }
+    }
+    
+    if (json['mentionAnalytics'] != null) {
+      final mentionMap = json['mentionAnalytics'] as Map<String, dynamic>;
+      for (final entry in mentionMap.entries) {
+        mentionAnalytics[entry.key] = entry.value as int;
+      }
+    }
+    
+    return UserAnalytics(
+      userId: userId,
+      summaries: summaries,
+      dailyData: dailyData,
+      weeklyData: weeklyData,
+      monthlyData: monthlyData,
+      tweetAnalytics: tweetAnalytics,
+      topPerformingTweets: topPerformingTweets,
+      followerGrowth: followerGrowth,
+      engagementTrends: engagementTrends,
+      hashtagPerformance: hashtagPerformance,
+      mentionAnalytics: mentionAnalytics,
+      createdAt: DateTime.parse(json['createdAt']),
+      lastUpdated: DateTime.parse(json['lastUpdated']),
+    );
+  }
+  
+  Map<String, dynamic> toJson() {
+    return {
+      'userId': userId,
+      'summaries': summaries.map((key, value) => MapEntry(key.name, value.toJson())),
+      'dailyData': dailyData.map((item) => item.toJson()).toList(),
+      'weeklyData': weeklyData.map((item) => item.toJson()).toList(),
+      'monthlyData': monthlyData.map((item) => item.toJson()).toList(),
+      'tweetAnalytics': tweetAnalytics.map((key, value) => MapEntry(key, value.toJson())),
+      'topPerformingTweets': topPerformingTweets,
+      'followerGrowth': followerGrowth,
+      'engagementTrends': engagementTrends,
+      'hashtagPerformance': hashtagPerformance,
+      'mentionAnalytics': mentionAnalytics,
+      'createdAt': createdAt.toIso8601String(),
+      'lastUpdated': lastUpdated.toIso8601String(),
+    };
+  }
+  
+  AnalyticsSummary? getSummary(AnalyticsPeriod period) {
+    return summaries[period];
+  }
+  
+  List<AnalyticsDataPoint> getDataForPeriod(AnalyticsPeriod period) {
+    switch (period) {
+      case AnalyticsPeriod.today:
+        return dailyData.where((point) => 
+          point.timestamp.isAfter(DateTime.now().subtract(Duration(days: 1)))
+        ).toList();
+      case AnalyticsPeriod.week:
+        return dailyData.where((point) => 
+          point.timestamp.isAfter(DateTime.now().subtract(Duration(days: 7)))
+        ).toList();
+      case AnalyticsPeriod.month:
+        return dailyData.where((point) => 
+          point.timestamp.isAfter(DateTime.now().subtract(Duration(days: 30)))
+        ).toList();
+      case AnalyticsPeriod.quarter:
+        return weeklyData.where((point) => 
+          point.timestamp.isAfter(DateTime.now().subtract(Duration(days: 90)))
+        ).toList();
+      case AnalyticsPeriod.year:
+        return monthlyData.where((point) => 
+          point.timestamp.isAfter(DateTime.now().subtract(Duration(days: 365)))
+        ).toList();
+      case AnalyticsPeriod.all:
+        return monthlyData;
+    }
+  }
+  
+  TweetAnalytics? getTweetAnalytics(String tweetId) {
+    return tweetAnalytics[tweetId];
+  }
+  
+  void addTweetAnalytics(String tweetId, TweetAnalytics analytics) {
+    tweetAnalytics[tweetId] = analytics;
+  }
+  
+  Map<String, int> getTopPerformingTweets({int limit = 10}) {
+    final sorted = Map.fromEntries(
+      topPerformingTweets.entries.toList()
+        ..sort((a, b) => b.value.compareTo(a.value))
+    );
+    return Map.fromEntries(sorted.entries.take(limit));
+  }
+  
+  double getAverageEngagementRate() {
+    if (tweetAnalytics.isEmpty) return 0.0;
+    
+    final totalRate = tweetAnalytics.values
+        .map((analytics) => analytics.getEngagementRate())
+        .reduce((a, b) => a + b);
+    
+    return totalRate / tweetAnalytics.length;
+  }
+  
+  double getFollowerGrowthRate(AnalyticsPeriod period) {
+    final summary = summaries[period];
+    if (summary == null) return 0.0;
+    
+    return summary.getGrowthRate(AnalyticsMetric.followers) ?? 0.0;
+  }
+  
+  Map<String, double> getTopHashtags({int limit = 10}) {
+    final sorted = Map.fromEntries(
+      hashtagPerformance.entries.toList()
+        ..sort((a, b) => b.value.compareTo(a.value))
+    );
+    return Map.fromEntries(sorted.entries.take(limit));
+  }
+  
+  Map<String, int> getTopMentions({int limit = 10}) {
+    final sorted = Map.fromEntries(
+      mentionAnalytics.entries.toList()
+        ..sort((a, b) => b.value.compareTo(a.value))
+    );
+    return Map.fromEntries(sorted.entries.take(limit));
+  }
+  
+  List<AnalyticsDataPoint> getFollowerGrowthData({int days = 30}) {
+    return followerGrowth.entries
+        .map((entry) => AnalyticsDataPoint(
+              timestamp: DateTime.parse(entry.key),
+              values: {AnalyticsMetric.followers: entry.value},
+            ))
+        .where((point) => point.timestamp.isAfter(DateTime.now().subtract(Duration(days: days))))
+        .toList()
+      ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
+  }
+  
+  List<AnalyticsDataPoint> getEngagementTrendData({int days = 30}) {
+    return engagementTrends.entries
+        .map((entry) => AnalyticsDataPoint(
+              timestamp: DateTime.parse(entry.key),
+              values: {AnalyticsMetric.engagements: entry.value},
+            ))
+        .where((point) => point.timestamp.isAfter(DateTime.now().subtract(Duration(days: days))))
+        .toList()
+      ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
+  }
+}
