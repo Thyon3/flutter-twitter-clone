@@ -453,6 +453,118 @@ class SearchState extends AppState {
         .toList();
   }
 
+  /// Load trending items from database
+  Future<void> loadTrendingItems() async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+      
+      // For demo, create sample trending items
+      _trendingItems = [
+        TrendingItem(
+          id: '1',
+          title: '#FlutterDev',
+          description: 'Flutter development discussions',
+          type: TrendingType.hashtags,
+          tweetCount: 15420,
+          userCount: 3200,
+          timestamp: DateTime.now().subtract(Duration(hours: 2)),
+          isTrendingUp: true,
+          changePercentage: 15.3,
+        ),
+        TrendingItem(
+          id: '2',
+          title: 'Tech News',
+          description: 'Latest technology updates',
+          type: TrendingType.technology,
+          tweetCount: 8750,
+          userCount: 2100,
+          timestamp: DateTime.now().subtract(Duration(hours: 4)),
+          isTrendingUp: true,
+          changePercentage: 8.7,
+        ),
+        TrendingItem(
+          id: '3',
+          title: 'World Cup',
+          description: 'Sports championship updates',
+          type: TrendingType.sports,
+          tweetCount: 25600,
+          userCount: 5400,
+          timestamp: DateTime.now().subtract(Duration(hours: 1)),
+          isTrendingUp: false,
+          changePercentage: -2.1,
+        ),
+      ];
+      
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _error = 'Failed to load trending items: $e';
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Refresh trending items
+  Future<void> refreshTrendingItems() async {
+    await loadTrendingItems();
+  }
+
+  /// Get trending items by type
+  List<TrendingItem> getTrendingItemsByType(TrendingType type) {
+    return _trendingItems.where((item) => item.type == type).toList();
+  }
+
+  /// Get top trending items (overall)
+  List<TrendingItem> getTopTrendingItems({int limit = 10}) {
+    final sortedItems = List<TrendingItem>.from(_trendingItems)
+      ..sort((a, b) => b.tweetCount.compareTo(a.tweetCount));
+    return sortedItems.take(limit).toList();
+  }
+
+  /// Get rising trending items (highest percentage increase)
+  List<TrendingItem> getRisingTrendingItems({int limit = 5}) {
+    final risingItems = _trendingItems
+        .where((item) => item.isTrendingUp && item.changePercentage != null)
+        .toList()
+      ..sort((a, b) => b.changePercentage!.compareTo(a.changePercentage!));
+    return risingItems.take(limit).toList();
+  }
+
+  /// Add custom trending item
+  Future<void> addTrendingItem(TrendingItem item) async {
+    try {
+      _trendingItems.insert(0, item);
+      await _saveTrendingItemsToStorage();
+      notifyListeners();
+    } catch (e) {
+      _error = 'Failed to add trending item: $e';
+      notifyListeners();
+    }
+  }
+
+  /// Remove trending item
+  Future<void> removeTrendingItem(String itemId) async {
+    try {
+      _trendingItems.removeWhere((item) => item.id == itemId);
+      await _saveTrendingItemsToStorage();
+      notifyListeners();
+    } catch (e) {
+      _error = 'Failed to remove trending item: $e';
+      notifyListeners();
+    }
+  }
+
+  /// Save trending items to storage
+  Future<void> _saveTrendingItemsToStorage() async {
+    try {
+      final trendingJson = _trendingItems.map((item) => item.toJson()).toList();
+      print('Saving trending items: $trendingJson');
+    } catch (e) {
+      print('Error saving trending items to storage: $e');
+    }
+  }
+
   /// get [UserModel list] from firebase realtime Database
   void getDataFromDatabase() {
     try {
