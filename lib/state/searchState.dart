@@ -565,6 +565,143 @@ class SearchState extends AppState {
     }
   }
 
+  /// Search users by query
+  Future<void> searchUsers(String query, {bool loadMore = false}) async {
+    try {
+      if (!loadMore) {
+        _isLoading = true;
+        _userPage = 0;
+        _hasMoreUsers = true;
+        _userFilterList = [];
+      }
+      
+      if (!_hasMoreUsers) return;
+      
+      notifyListeners();
+      
+      final snapshot = await kDatabase
+          .child('profile')
+          .orderByChild('displayName')
+          .startAt(query.toLowerCase())
+          .endAt(query.toLowerCase() + '\uf8ff')
+          .limitToFirst(_pageSize)
+          .get();
+      
+      if (snapshot.exists) {
+        final Map<dynamic, dynamic> usersData = snapshot.value as Map;
+        List<UserModel> users = [];
+        
+        for (var entry in usersData.entries) {
+          final userData = Map<String, dynamic>.from(entry.value);
+          userData['key'] = entry.key.toString();
+          
+          final user = UserModel.fromJson(userData);
+          
+          // Apply filters
+          if (_shouldIncludeUser(user)) {
+            users.add(user);
+          }
+        }
+        
+        if (loadMore) {
+          _userFilterList!.addAll(users);
+        } else {
+          _userFilterList = users;
+        }
+        
+        _userPage++;
+        _hasMoreUsers = users.length == _pageSize;
+      } else {
+        _hasMoreUsers = false;
+      }
+      
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _error = 'Failed to search users: $e';
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Check if user should be included based on current filter
+  bool _shouldIncludeUser(UserModel user) {
+    switch (_currentFilter) {
+      case SearchFilter.verified:
+        return user.isVerified ?? false;
+      case SearchFilter.following:
+        // This would check if current user follows this user
+        return false; // Placeholder
+      case SearchFilter.all:
+      default:
+        return true;
+    }
+  }
+
+  /// Load more users
+  Future<void> loadMoreUsers() async {
+    if (_currentQuery.isNotEmpty) {
+      await searchUsers(_currentQuery, loadMore: true);
+    }
+  }
+
+  /// Search users by username
+  Future<void> searchUsersByUsername(String username) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+      
+      final snapshot = await kDatabase
+          .child('profile')
+          .orderByChild('userName')
+          .equalTo(username)
+          .get();
+      
+      if (snapshot.exists) {
+        final Map<dynamic, dynamic> usersData = snapshot.value as Map;
+        List<UserModel> users = [];
+        
+        for (var entry in usersData.entries) {
+          final userData = Map<String, dynamic>.from(entry.value);
+          userData['key'] = entry.key.toString();
+          
+          final user = UserModel.fromJson(userData);
+          users.add(user);
+        }
+        
+        _userFilterList = users;
+      } else {
+        _userFilterList = [];
+      }
+      
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _error = 'Failed to search users by username: $e';
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Search users by location
+  Future<void> searchUsersByLocation(String location) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+      
+      // This would implement location-based search
+      // For now, return empty list
+      _userFilterList = [];
+      
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _error = 'Failed to search users by location: $e';
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   /// get [UserModel list] from firebase realtime Database
   void getDataFromDatabase() {
     try {
