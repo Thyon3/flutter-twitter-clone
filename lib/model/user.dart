@@ -258,7 +258,35 @@ class UserModel extends Equatable {
       this.isVerified,
       this.fcmToken,
       this.followersList,
-      this.followingList});
+      this.followingList,
+      // Profile customization
+      this.profileTheme,
+      this.accentColor,
+      this.profileLayout,
+      this.profilePrivacy,
+      this.visibilitySettings,
+      this.customBackgroundColor,
+      this.customTextColor,
+      this.customAccentColor,
+      this.showProfileViews,
+      this.showTweetCount,
+      this.showFollowingCount,
+      this.showFollowerCount,
+      this.showJoinDate,
+      this.showLocation,
+      this.showWebsite,
+      this.showEmail,
+      this.allowDirectMessages,
+      this.allowTagging,
+      this.allowSearchIndexing,
+      this.profileBackgroundImage,
+      this.profileBorderColor,
+      this.profileBorderWidth,
+      this.profileFont,
+      this.profileFontSize,
+      this.enableAnimations,
+      this.enableParticles,
+      this.customCSS});
 
   UserModel.fromJson(Map<dynamic, dynamic>? map) {
     if (map == null) {
