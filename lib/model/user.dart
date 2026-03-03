@@ -310,6 +310,82 @@ class UserModel extends Equatable {
     webSite = map['webSite'];
     fcmToken = map['fcmToken'];
     isVerified = map['isVerified'] ?? false;
+    
+    // Profile customization fields
+    profileTheme = map['profileTheme'] != null 
+        ? ProfileThemeExtension.fromString(map['profileTheme'])
+        : null;
+    accentColor = map['accentColor'] != null 
+        ? ProfileAccentColorExtension.fromString(map['accentColor'])
+        : null;
+    profileLayout = map['profileLayout'] != null 
+        ? ProfileLayoutExtension.fromString(map['profileLayout'])
+        : null;
+    profilePrivacy = map['profilePrivacy'] != null 
+        ? ProfilePrivacyExtension.fromString(map['profilePrivacy'])
+        : null;
+    
+    // Visibility settings
+    if (map['visibilitySettings'] != null) {
+      visibilitySettings = <ProfileVisibility>{};
+      final visibilityList = map['visibilitySettings'] as List;
+      for (final visibility in visibilityList) {
+        switch (visibility) {
+          case 'showEmail':
+            visibilitySettings!.add(ProfileVisibility.showEmail);
+            break;
+          case 'showLocation':
+            visibilitySettings!.add(ProfileVisibility.showLocation);
+            break;
+          case 'showWebsite':
+            visibilitySettings!.add(ProfileVisibility.showWebsite);
+            break;
+          case 'showDob':
+            visibilitySettings!.add(ProfileVisibility.showDob);
+            break;
+          case 'showFollowers':
+            visibilitySettings!.add(ProfileVisibility.showFollowers);
+            break;
+          case 'showFollowing':
+            visibilitySettings!.add(ProfileVisibility.showFollowing);
+            break;
+          case 'showStats':
+            visibilitySettings!.add(ProfileVisibility.showStats);
+            break;
+        }
+      }
+    }
+    
+    // Custom styling
+    customBackgroundColor = map['customBackgroundColor'];
+    customTextColor = map['customTextColor'];
+    customAccentColor = map['customAccentColor'];
+    profileBackgroundImage = map['profileBackgroundImage'];
+    profileBorderColor = map['profileBorderColor'];
+    profileBorderWidth = map['profileBorderWidth']?.toDouble();
+    profileFont = map['profileFont'];
+    profileFontSize = map['profileFontSize']?.toDouble();
+    
+    // Display preferences
+    showProfileViews = map['showProfileViews'] ?? true;
+    showTweetCount = map['showTweetCount'] ?? true;
+    showFollowingCount = map['showFollowingCount'] ?? true;
+    showFollowerCount = map['showFollowerCount'] ?? true;
+    showJoinDate = map['showJoinDate'] ?? true;
+    showLocation = map['showLocation'] ?? true;
+    showWebsite = map['showWebsite'] ?? true;
+    showEmail = map['showEmail'] ?? false;
+    
+    // Privacy settings
+    allowDirectMessages = map['allowDirectMessages'] ?? true;
+    allowTagging = map['allowTagging'] ?? true;
+    allowSearchIndexing = map['allowSearchIndexing'] ?? true;
+    
+    // Visual effects
+    enableAnimations = map['enableAnimations'] ?? true;
+    enableParticles = map['enableParticles'] ?? false;
+    customCSS = map['customCSS'];
+    
     if (map['followerList'] != null) {
       followersList = <String>[];
       map['followerList'].forEach((value) {
