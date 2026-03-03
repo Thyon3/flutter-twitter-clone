@@ -256,16 +256,101 @@ class TrendingItem {
 
 class SearchState extends AppState {
   bool isBusy = false;
+  bool _isLoading = false;
+  String? _error;
   SortUser sortBy = SortUser.MaxFollower;
+  
+  // Search properties
+  String _currentQuery = '';
+  SearchType _currentSearchType = SearchType.all;
+  SearchFilter _currentFilter = SearchFilter.all;
+  List<SearchQuery> _searchHistory = [];
+  List<TrendingItem> _trendingItems = [];
+  
+  // Results
   List<UserModel>? _userFilterList;
   List<UserModel>? _userlist;
-
+  List<FeedModel>? _tweetResults;
+  List<String>? _hashtagResults;
+  List<FeedModel>? _mediaResults;
+  
+  // Pagination
+  int _userPage = 0;
+  int _tweetPage = 0;
+  bool _hasMoreUsers = true;
+  bool _hasMoreTweets = true;
+  final int _pageSize = 20;
+  
+  // Getters
   List<UserModel>? get userlist {
     if (_userFilterList == null) {
       return null;
     } else {
       return List.from(_userFilterList!);
     }
+  }
+  
+  String get currentQuery => _currentQuery;
+  SearchType get currentSearchType => _currentSearchType;
+  SearchFilter get currentFilter => _currentFilter;
+  List<SearchQuery> get searchHistory => List.from(_searchHistory);
+  List<TrendingItem> get trendingItems => List.from(_trendingItems);
+  List<FeedModel>? get tweetResults => _tweetResults;
+  List<String>? get hashtagResults => _hashtagResults;
+  List<FeedModel>? get mediaResults => _mediaResults;
+  bool get isLoading => _isLoading;
+  String? get error => _error;
+  bool get hasSearchHistory => _searchHistory.isNotEmpty;
+  bool get hasTrendingItems => _trendingItems.isNotEmpty;
+  bool get hasMoreUsers => _hasMoreUsers;
+  bool get hasMoreTweets => _hasMoreTweets;
+  bool get hasQuery => _currentQuery.isNotEmpty;
+  
+  /// Initialize search state
+  Future<void> initialize() async {
+    await Future.wait([
+      loadSearchHistory(),
+      loadTrendingItems(),
+    ]);
+  }
+  
+  /// Clear error
+  void clearError() {
+    _error = null;
+    notifyListeners();
+  }
+  
+  /// Reset search state
+  void resetSearch() {
+    _currentQuery = '';
+    _userFilterList = null;
+    _tweetResults = null;
+    _hashtagResults = null;
+    _mediaResults = null;
+    _userPage = 0;
+    _tweetPage = 0;
+    _hasMoreUsers = true;
+    _hasMoreTweets = true;
+    _error = null;
+    notifyListeners();
+  }
+  
+  /// Set search query
+  void setQuery(String query) {
+    _currentQuery = query;
+    notifyListeners();
+  }
+  
+  /// Set search type
+  void setSearchType(SearchType type) {
+    _currentSearchType = type;
+    notifyListeners();
+  }
+  
+  /// Set search filter
+  void setFilter(SearchFilter filter) {
+    _currentFilter = filter;
+    notifyListeners();
   }
 
   /// get [UserModel list] from firebase realtime Database
