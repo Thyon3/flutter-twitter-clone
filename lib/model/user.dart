@@ -421,7 +421,44 @@ class UserModel extends Equatable {
       'isVerified': isVerified ?? false,
       'fcmToken': fcmToken,
       'followerList': followersList,
-      'followingList': followingList
+      'followingList': followingList,
+      
+      // Profile customization
+      'profileTheme': profileTheme?.name,
+      'accentColor': accentColor?.name,
+      'profileLayout': profileLayout?.name,
+      'profilePrivacy': profilePrivacy?.name,
+      'visibilitySettings': visibilitySettings?.map((v) => v.name).toList(),
+      
+      // Custom styling
+      'customBackgroundColor': customBackgroundColor,
+      'customTextColor': customTextColor,
+      'customAccentColor': customAccentColor,
+      'profileBackgroundImage': profileBackgroundImage,
+      'profileBorderColor': profileBorderColor,
+      'profileBorderWidth': profileBorderWidth,
+      'profileFont': profileFont,
+      'profileFontSize': profileFontSize,
+      
+      // Display preferences
+      'showProfileViews': showProfileViews,
+      'showTweetCount': showTweetCount,
+      'showFollowingCount': showFollowingCount,
+      'showFollowerCount': showFollowerCount,
+      'showJoinDate': showJoinDate,
+      'showLocation': showLocation,
+      'showWebsite': showWebsite,
+      'showEmail': showEmail,
+      
+      // Privacy settings
+      'allowDirectMessages': allowDirectMessages,
+      'allowTagging': allowTagging,
+      'allowSearchIndexing': allowSearchIndexing,
+      
+      // Visual effects
+      'enableAnimations': enableAnimations,
+      'enableParticles': enableParticles,
+      'customCSS': customCSS,
     };
   }
 
