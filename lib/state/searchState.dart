@@ -353,6 +353,106 @@ class SearchState extends AppState {
     notifyListeners();
   }
 
+  /// Load search history from local storage
+  Future<void> loadSearchHistory() async {
+    try {
+      // This would load from SharedPreferences or similar
+      // For now, using empty list
+      _searchHistory = [];
+      notifyListeners();
+    } catch (e) {
+      _error = 'Failed to load search history: $e';
+      notifyListeners();
+    }
+  }
+
+  /// Save search query to history
+  Future<void> saveSearchToHistory(String query, SearchType type, int resultCount) async {
+    try {
+      // Remove existing query if present
+      _searchHistory.removeWhere((item) => item.text == query);
+      
+      // Add new query to beginning
+      final searchQuery = SearchQuery(
+        text: query,
+        type: type,
+        timestamp: DateTime.now(),
+        resultCount: resultCount,
+      );
+      
+      _searchHistory.insert(0, searchQuery);
+      
+      // Keep only last 50 searches
+      if (_searchHistory.length > 50) {
+        _searchHistory = _searchHistory.take(50).toList();
+      }
+      
+      // Save to local storage
+      await _saveSearchHistoryToStorage();
+      notifyListeners();
+    } catch (e) {
+      print('Error saving search to history: $e');
+    }
+  }
+
+  /// Remove search query from history
+  Future<void> removeFromSearchHistory(String query) async {
+    try {
+      _searchHistory.removeWhere((item) => item.text == query);
+      await _saveSearchHistoryToStorage();
+      notifyListeners();
+    } catch (e) {
+      print('Error removing from search history: $e');
+    }
+  }
+
+  /// Clear all search history
+  Future<void> clearSearchHistory() async {
+    try {
+      _searchHistory.clear();
+      await _saveSearchHistoryToStorage();
+      notifyListeners();
+    } catch (e) {
+      _error = 'Failed to clear search history: $e';
+      notifyListeners();
+    }
+  }
+
+  /// Save search history to local storage
+  Future<void> _saveSearchHistoryToStorage() async {
+    try {
+      // This would save to SharedPreferences or similar
+      // For now, just print the data
+      final historyJson = _searchHistory.map((item) => item.toJson()).toList();
+      print('Saving search history: $historyJson');
+    } catch (e) {
+      print('Error saving search history to storage: $e');
+    }
+  }
+
+  /// Get recent search queries (last 10)
+  List<SearchQuery> getRecentSearches() {
+    return _searchHistory.take(10).toList();
+  }
+
+  /// Get popular search queries (most frequent)
+  List<SearchQuery> getPopularSearches() {
+    final queryCounts = <String, int>{};
+    
+    for (final query in _searchHistory) {
+      queryCounts[query.text] = (queryCounts[query.text] ?? 0) + 1;
+    }
+    
+    final sortedQueries = queryCounts.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    
+    return sortedQueries
+        .take(10)
+        .map((entry) => _searchHistory
+            .firstWhere((query) => query.text == entry.key))
+        .toList();
+  }
+
   /// get [UserModel list] from firebase realtime Database
   void getDataFromDatabase() {
     try {
