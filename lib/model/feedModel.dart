@@ -32,6 +32,9 @@ class FeedModel {
   // Poll support
   PollModel? poll;
   
+  // GIF support
+  String? gifUrl;
+  
   FeedModel(
       {this.key,
       this.description,
@@ -54,7 +57,8 @@ class FeedModel {
       this.isThreadStart,
       this.isThreadEnd,
       this.threadAuthorId,
-      this.poll});
+      this.poll,
+      this.gifUrl});
   toJson() {
     return {
       "userId": userId,
@@ -78,6 +82,7 @@ class FeedModel {
       "isThreadEnd": isThreadEnd,
       "threadAuthorId": threadAuthorId,
       "poll": poll?.toJson(),
+      "gifUrl": gifUrl,
     };
   }
 
@@ -108,6 +113,9 @@ class FeedModel {
     if (map['poll'] != null) {
       poll = PollModel.fromJson(map['poll']);
     }
+    
+    // GIF support
+    gifUrl = map['gifUrl'];
     if (map['tags'] != null) {
       tags = <String>[];
       map['tags'].forEach((value) {
@@ -222,5 +230,10 @@ class FeedModel {
   /// Check if user has voted in the poll
   bool hasUserVotedInPoll(String userId) {
     return hasPoll && poll!.hasUserVoted(userId);
+  }
+
+  /// Check if this tweet contains a GIF
+  bool get hasGif {
+    return gifUrl != null && gifUrl!.isNotEmpty;
   }
 }
