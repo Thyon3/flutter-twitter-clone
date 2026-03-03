@@ -670,3 +670,153 @@ class ContentReport {
     status = ModerationStatus.approved;
   }
 }
+
+class ModerationQueue {
+  final String id;
+  final String name;
+  final String description;
+  final List<ContentReport> reports;
+  final List<String> assignedModerators;
+  final ModerationPriority priority;
+  final DateTime createdAt;
+  final DateTime? lastProcessed;
+  final bool isActive;
+  final Map<String, dynamic> filters;
+  final int maxReports;
+  final int currentCount;
+  final ModerationStatus? targetStatus;
+  final List<ContentType> contentTypes;
+  final List<ReportReason> allowedReasons;
+  
+  ModerationQueue({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.reports,
+    required this.assignedModerators,
+    required this.priority,
+    required this.createdAt,
+    this.lastProcessed,
+    this.isActive = true,
+    this.filters = const {},
+    this.maxReports = 100,
+    this.currentCount = 0,
+    this.targetStatus,
+    this.contentTypes = const [],
+    this.allowedReasons = const [],
+  });
+  
+  factory ModerationQueue.fromJson(Map<String, dynamic> json) {
+    final reports = <ContentReport>[];
+    if (json['reports'] != null) {
+      final reportsList = json['reports'] as List;
+      for (final report in reportsList) {
+        reports.add(ContentReport.fromJson(report));
+      }
+    }
+    
+    final contentTypes = <ContentType>[];
+    if (json['contentTypes'] != null) {
+      final typesList = json['contentTypes'] as List;
+      for (final type in typesList) {
+        contentTypes.add(ContentTypeExtension.fromString(type));
+      }
+    }
+    
+    final allowedReasons = <ReportReason>[];
+    if (json['allowedReasons'] != null) {
+      final reasonsList = json['allowedReasons'] as List;
+      for (final reason in reasonsList) {
+        allowedReasons.add(ReportReasonExtension.fromString(reason));
+      }
+    }
+    
+    return ModerationQueue(
+      id: json['id'],
+      name: json['name'],
+      description: json['description'],
+      reports: reports,
+      assignedModerators: List<String>.from(json['assignedModerators'] ?? []),
+      priority: ModerationPriorityExtension.fromString(json['priority']),
+      createdAt: DateTime.parse(json['createdAt']),
+      lastProcessed: json['lastProcessed'] != null ? DateTime.parse(json['lastProcessed']) : null,
+      isActive: json['isActive'] ?? true,
+      filters: json['filters'] ?? {},
+      maxReports: json['maxReports'] ?? 100,
+      currentCount: json['currentCount'] ?? 0,
+      targetStatus: json['targetStatus'] != null ? ModerationStatusExtension.fromString(json['targetStatus']) : null,
+      contentTypes: contentTypes,
+      allowedReasons: allowedReasons,
+    );
+  }
+  
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'description': description,
+      'reports': reports.map((r) => r.toJson()).toList(),
+      'assignedModerators': assignedModerators,
+      'priority': priority.name,
+      'createdAt': createdAt.toIso8601String(),
+      'lastProcessed': lastProcessed?.toIso8601String(),
+      'isActive': isActive,
+      'filters': filters,
+      'maxReports': maxReports,
+      'currentCount': currentCount,
+      'targetStatus': targetStatus?.name,
+      'contentTypes': contentTypes.map((t) => t.name).toList(),
+      'allowedReasons': allowedReasons.map((r) => r.name).toList(),
+    };
+  }
+  
+  bool get isFull => currentCount >= maxReports;
+  
+  bool get hasHighPriorityReports => reports.any((r) => r.priority == ModerationPriority.urgent);
+  
+  bool get hasCriticalReports => reports.any((r) => r.severity == ModerationSeverity.critical);
+  
+  List<ContentReport> get pendingReports => reports.where((r) => r.status == ModerationStatus.pending).toList();
+  
+  List<ContentReport> get urgentReports => reports.where((r) => r.priority == ModerationPriority.urgent).toList();
+  
+  List<ContentReport> get criticalReports => reports.where((r) => r.severity == ModerationSeverity.critical).toList();
+  
+  int get pendingCount => pendingReports.length;
+  
+  int get urgentCount => urgentReports.length;
+  
+  int get criticalCount => criticalReports.length;
+  
+  double get completionRate {
+    if (reports.isEmpty) return 0.0;
+    final completed = reports.where((r) => r.isReviewed).length;
+    return (completed / reports.length) * 100;
+  }
+  
+  void addReport(ContentReport report) {
+    if (!isFull) {
+      reports.add(report);
+      currentCount++;
+    }
+  }
+  
+  void removeReport(String reportId) {
+    reports.removeWhere((r) => r.id == reportId);
+    currentCount = reports.length;
+  }
+  
+  void assignModerator(String moderatorId) {
+    if (!assignedModerators.contains(moderatorId)) {
+      assignedModerators.add(moderatorId);
+    }
+  }
+  
+  void removeModerator(String moderatorId) {
+    assignedModerators.remove(moderatorId);
+  }
+  
+  void updateLastProcessed() {
+    lastProcessed = DateTime.now();
+  }
+}
