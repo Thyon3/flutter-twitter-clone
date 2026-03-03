@@ -209,6 +209,35 @@ class UserModel extends Equatable {
   String? fcmToken;
   List<String>? followersList;
   List<String>? followingList;
+  
+  // Profile customization properties
+  ProfileTheme? profileTheme;
+  ProfileAccentColor? accentColor;
+  ProfileLayout? profileLayout;
+  ProfilePrivacy? profilePrivacy;
+  Set<ProfileVisibility>? visibilitySettings;
+  String? customBackgroundColor;
+  String? customTextColor;
+  String? customAccentColor;
+  bool? showProfileViews;
+  bool? showTweetCount;
+  bool? showFollowingCount;
+  bool? showFollowerCount;
+  bool? showJoinDate;
+  bool? showLocation;
+  bool? showWebsite;
+  bool? showEmail;
+  bool? allowDirectMessages;
+  bool? allowTagging;
+  bool? allowSearchIndexing;
+  String? profileBackgroundImage;
+  String? profileBorderColor;
+  double? profileBorderWidth;
+  String? profileFont;
+  double? profileFontSize;
+  bool? enableAnimations;
+  bool? enableParticles;
+  String? customCSS;
 
   UserModel(
       {this.email,
