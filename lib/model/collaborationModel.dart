@@ -460,3 +460,143 @@ extension PresenceStatusExtension on PresenceStatus {
     }
   }
 }
+
+class CollaborationMember {
+  final String id;
+  final String userId;
+  final String displayName;
+  final String? email;
+  final String? avatar;
+  final CollaborationRole role;
+  final CollaborationStatus status;
+  final List<CollaborationPermission> permissions;
+  final DateTime joinedAt;
+  final DateTime? lastActive;
+  final PresenceStatus presenceStatus;
+  final bool isOnline;
+  final String? currentDocument;
+  final Map<String, dynamic> metadata;
+  final List<String> tags;
+  
+  CollaborationMember({
+    required this.id,
+    required this.userId,
+    required this.displayName,
+    this.email,
+    this.avatar,
+    required this.role,
+    required this.status,
+    required this.permissions,
+    required this.joinedAt,
+    this.lastActive,
+    this.presenceStatus = PresenceStatus.offline,
+    this.isOnline = false,
+    this.currentDocument,
+    this.metadata = const {},
+    this.tags = const [],
+  });
+  
+  factory CollaborationMember.fromJson(Map<String, dynamic> json) {
+    final permissions = <CollaborationPermission>[];
+    if (json['permissions'] != null) {
+      final permissionsList = json['permissions'] as List;
+      for (final permission in permissionsList) {
+        permissions.add(CollaborationPermissionExtension.fromString(permission));
+      }
+    }
+    
+    return CollaborationMember(
+      id: json['id'],
+      userId: json['userId'],
+      displayName: json['displayName'],
+      email: json['email'],
+      avatar: json['avatar'],
+      role: CollaborationRoleExtension.fromString(json['role']),
+      status: CollaborationStatusExtension.fromString(json['status']),
+      permissions: permissions,
+      joinedAt: DateTime.parse(json['joinedAt']),
+      lastActive: json['lastActive'] != null ? DateTime.parse(json['lastActive']) : null,
+      presenceStatus: PresenceStatusExtension.fromString(json['presenceStatus'] ?? 'offline'),
+      isOnline: json['isOnline'] ?? false,
+      currentDocument: json['currentDocument'],
+      metadata: json['metadata'] ?? {},
+      tags: List<String>.from(json['tags'] ?? []),
+    );
+  }
+  
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'userId': userId,
+      'displayName': displayName,
+      'email': email,
+      'avatar': avatar,
+      'role': role.name,
+      'status': status.name,
+      'permissions': permissions.map((p) => p.name).toList(),
+      'joinedAt': joinedAt.toIso8601String(),
+      'lastActive': lastActive?.toIso8601String(),
+      'presenceStatus': presenceStatus.name,
+      'isOnline': isOnline,
+      'currentDocument': currentDocument,
+      'metadata': metadata,
+      'tags': tags,
+    };
+  }
+  
+  bool get isActive => status == CollaborationStatus.active;
+  
+  bool get canEdit => permissions.contains(CollaborationPermission.edit);
+  
+  bool get canDelete => permissions.contains(CollaborationPermission.delete);
+  
+  bool get canShare => permissions.contains(CollaborationPermission.share);
+  
+  bool get canInvite => permissions.contains(CollaborationPermission.invite);
+  
+  bool get canManage => permissions.contains(CollaborationPermission.manage);
+  
+  bool get isOwner => role == CollaborationRole.owner;
+  
+  bool get isAdmin => role == CollaborationRole.admin;
+  
+  bool get isEditor => role == CollaborationRole.editor;
+  
+  bool get isViewer => role == CollaborationRole.viewer;
+  
+  bool get isCommenter => role == CollaborationRole.commenter;
+  
+  String get timeAgo {
+    if (lastActive == null) return 'Never';
+    
+    final now = DateTime.now();
+    final difference = now.difference(lastActive!);
+    
+    if (difference.inMinutes < 1) {
+      return 'Just now';
+    } else if (difference.inHours < 1) {
+      return '${difference.inMinutes}m ago';
+    } else if (difference.inDays < 1) {
+      return '${difference.inHours}h ago';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays}d ago';
+    } else {
+      return '${(difference.inDays / 7).floor()}w ago';
+    }
+  }
+  
+  void updatePresence(PresenceStatus newStatus) {
+    presenceStatus = newStatus;
+    isOnline = newStatus == PresenceStatus.online;
+    lastActive = DateTime.now();
+  }
+  
+  void updateRole(CollaborationRole newRole) {
+    role = newRole;
+    permissions = newRole.permissions;
+  }
+  
+  bool hasPermission(CollaborationPermission permission) {
+    return permissions.contains(permission);
+  }
+}
