@@ -5,6 +5,7 @@ import 'package:twitterclone/helper/utility.dart';
 import 'package:twitterclone/model/feedModel.dart';
 import 'package:twitterclone/state/authState.dart';
 import 'package:twitterclone/state/feedState.dart';
+import 'package:twitterclone/state/bookmarkState.dart';
 import 'package:twitterclone/ui/page/common/usersListPage.dart';
 import 'package:twitterclone/ui/page/feed/composeQuoteTweet.dart';
 import 'package:twitterclone/ui/theme/theme.dart';
@@ -33,6 +34,7 @@ class TweetIconsRow extends StatelessWidget {
 
   Widget _likeCommentsIcons(BuildContext context, FeedModel model) {
     var authState = Provider.of<AuthState>(context, listen: false);
+    var bookmarkState = Provider.of<BookmarkState>(context, listen: false);
 
     return Container(
       color: Colors.transparent,
@@ -92,6 +94,20 @@ class TweetIconsRow extends StatelessWidget {
               );
             },
             iconColor: iconColor,
+            size: size ?? 20,
+          ),
+          _iconWidget(
+            context,
+            text: '',
+            icon: bookmarkState.isTweetBookmarked(model.key!)
+                ? Icons.bookmark
+                : Icons.bookmark_border,
+            onPressed: () {
+              _toggleBookmark(context);
+            },
+            iconColor: bookmarkState.isTweetBookmarked(model.key!)
+                ? iconEnableColor
+                : iconColor,
             size: size ?? 20,
           ),
           _iconWidget(context, text: '', icon: null, sysIcon: Icons.share,
@@ -251,6 +267,58 @@ class TweetIconsRow extends StatelessWidget {
       },
       child: child,
     );
+  }
+
+  void _toggleBookmark(BuildContext context) async {
+    final bookmarkState = Provider.of<BookmarkState>(context, listen: false);
+    final authState = Provider.of<AuthState>(context, listen: false);
+    final userId = authState.userModel?.userId;
+    
+    if (userId == null || model.key == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Unable to bookmark tweet'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+    
+    try {
+      if (bookmarkState.isTweetBookmarked(model.key!)) {
+        // Remove bookmark
+        final success = await bookmarkState.removeBookmark(model.key!);
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Bookmark removed'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      } else {
+        // Add bookmark
+        final bookmarkId = await bookmarkState.createBookmark(
+          tweetId: model.key!,
+          tweet: model,
+        );
+        if (bookmarkId != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Tweet bookmarked'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   void addLikeToTweet(BuildContext context) {
