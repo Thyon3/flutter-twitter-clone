@@ -1,5 +1,193 @@
 import 'package:equatable/equatable.dart';
 
+enum ProfileTheme {
+  light,
+  dark,
+  blue,
+  purple,
+  green,
+  orange,
+  custom,
+}
+
+enum ProfileAccentColor {
+  blue,
+  red,
+  pink,
+  purple,
+  green,
+  orange,
+  yellow,
+  custom,
+}
+
+enum ProfileLayout {
+  default,
+  compact,
+  detailed,
+  minimal,
+}
+
+enum ProfilePrivacy {
+  public,
+  private,
+  friends,
+}
+
+enum ProfileVisibility {
+  showEmail,
+  showLocation,
+  showWebsite,
+  showDob,
+  showFollowers,
+  showFollowing,
+  showStats,
+}
+
+extension ProfileThemeExtension on ProfileTheme {
+  String get displayName {
+    switch (this) {
+      case ProfileTheme.light:
+        return 'Light';
+      case ProfileTheme.dark:
+        return 'Dark';
+      case ProfileTheme.blue:
+        return 'Blue';
+      case ProfileTheme.purple:
+        return 'Purple';
+      case ProfileTheme.green:
+        return 'Green';
+      case ProfileTheme.orange:
+        return 'Orange';
+      case ProfileTheme.custom:
+        return 'Custom';
+    }
+  }
+
+  static ProfileTheme fromString(String theme) {
+    switch (theme.toLowerCase()) {
+      case 'light':
+        return ProfileTheme.light;
+      case 'dark':
+        return ProfileTheme.dark;
+      case 'blue':
+        return ProfileTheme.blue;
+      case 'purple':
+        return ProfileTheme.purple;
+      case 'green':
+        return ProfileTheme.green;
+      case 'orange':
+        return ProfileTheme.orange;
+      case 'custom':
+        return ProfileTheme.custom;
+      default:
+        return ProfileTheme.light;
+    }
+  }
+}
+
+extension ProfileAccentColorExtension on ProfileAccentColor {
+  String get displayName {
+    switch (this) {
+      case ProfileAccentColor.blue:
+        return 'Blue';
+      case ProfileAccentColor.red:
+        return 'Red';
+      case ProfileAccentColor.pink:
+        return 'Pink';
+      case ProfileAccentColor.purple:
+        return 'Purple';
+      case ProfileAccentColor.green:
+        return 'Green';
+      case ProfileAccentColor.orange:
+        return 'Orange';
+      case ProfileAccentColor.yellow:
+        return 'Yellow';
+      case ProfileAccentColor.custom:
+        return 'Custom';
+    }
+  }
+
+  static ProfileAccentColor fromString(String color) {
+    switch (color.toLowerCase()) {
+      case 'blue':
+        return ProfileAccentColor.blue;
+      case 'red':
+        return ProfileAccentColor.red;
+      case 'pink':
+        return ProfileAccentColor.pink;
+      case 'purple':
+        return ProfileAccentColor.purple;
+      case 'green':
+        return ProfileAccentColor.green;
+      case 'orange':
+        return ProfileAccentColor.orange;
+      case 'yellow':
+        return ProfileAccentColor.yellow;
+      case 'custom':
+        return ProfileAccentColor.custom;
+      default:
+        return ProfileAccentColor.blue;
+    }
+  }
+}
+
+extension ProfileLayoutExtension on ProfileLayout {
+  String get displayName {
+    switch (this) {
+      case ProfileLayout.default:
+        return 'Default';
+      case ProfileLayout.compact:
+        return 'Compact';
+      case ProfileLayout.detailed:
+        return 'Detailed';
+      case ProfileLayout.minimal:
+        return 'Minimal';
+    }
+  }
+
+  static ProfileLayout fromString(String layout) {
+    switch (layout.toLowerCase()) {
+      case 'default':
+        return ProfileLayout.default;
+      case 'compact':
+        return ProfileLayout.compact;
+      case 'detailed':
+        return ProfileLayout.detailed;
+      case 'minimal':
+        return ProfileLayout.minimal;
+      default:
+        return ProfileLayout.default;
+    }
+  }
+}
+
+extension ProfilePrivacyExtension on ProfilePrivacy {
+  String get displayName {
+    switch (this) {
+      case ProfilePrivacy.public:
+        return 'Public';
+      case ProfilePrivacy.private:
+        return 'Private';
+      case ProfilePrivacy.friends:
+        return 'Friends';
+    }
+  }
+
+  static ProfilePrivacy fromString(String privacy) {
+    switch (privacy.toLowerCase()) {
+      case 'public':
+        return ProfilePrivacy.public;
+      case 'private':
+        return ProfilePrivacy.private;
+      case 'friends':
+        return ProfilePrivacy.friends;
+      default:
+        return ProfilePrivacy.public;
+    }
+  }
+}
+
 // ignore: must_be_immutable
 class UserModel extends Equatable {
   String? key;
