@@ -822,4 +822,237 @@ class SearchState extends AppState {
     }).toList();
     return list;
   }
+
+  /// Search tweets by query
+  Future<void> searchTweets(String query, {bool loadMore = false}) async {
+    try {
+      if (!loadMore) {
+        _isLoading = true;
+        _tweetPage = 0;
+        _hasMoreTweets = true;
+        _tweetResults = [];
+      }
+      
+      if (!_hasMoreTweets) return;
+      
+      notifyListeners();
+      
+      final snapshot = await kDatabase
+          .child('tweets')
+          .orderByChild('description')
+          .startAt(query.toLowerCase())
+          .endAt(query.toLowerCase() + '\uf8ff')
+          .limitToFirst(_pageSize)
+          .get();
+      
+      if (snapshot.exists) {
+        final Map<dynamic, dynamic> tweetsData = snapshot.value as Map;
+        List<FeedModel> tweets = [];
+        
+        for (var entry in tweetsData.entries) {
+          final tweetData = Map<String, dynamic>.from(entry.value);
+          tweetData['key'] = entry.key.toString();
+          
+          final tweet = FeedModel.fromJson(tweetData);
+          
+          // Apply filters
+          if (_shouldIncludeTweet(tweet)) {
+            tweets.add(tweet);
+          }
+        }
+        
+        if (loadMore) {
+          _tweetResults!.addAll(tweets);
+        } else {
+          _tweetResults = tweets;
+        }
+        
+        _tweetPage++;
+        _hasMoreTweets = tweets.length == _pageSize;
+      } else {
+        _hasMoreTweets = false;
+      }
+      
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _error = 'Failed to search tweets: $e';
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Check if tweet should be included based on current filter
+  bool _shouldIncludeTweet(FeedModel tweet) {
+    switch (_currentFilter) {
+      case SearchFilter.verified:
+        return tweet.user?.isVerified ?? false;
+      case SearchFilter.recent:
+        final tweetTime = DateTime.tryParse(tweet.createdAt ?? '');
+        if (tweetTime == null) return false;
+        final now = DateTime.now();
+        return now.difference(tweetTime).inDays <= 7;
+      case SearchFilter.popular:
+        return (tweet.likeCount ?? 0) > 100 || (tweet.retweetCount ?? 0) > 50;
+      case SearchFilter.all:
+      default:
+        return true;
+    }
+  }
+
+  /// Load more tweets
+  Future<void> loadMoreTweets() async {
+    if (_currentQuery.isNotEmpty) {
+      await searchTweets(_currentQuery, loadMore: true);
+    }
+  }
+
+  /// Search tweets by hashtag
+  Future<void> searchTweetsByHashtag(String hashtag) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+      
+      final snapshot = await kDatabase
+          .child('tweets')
+          .orderByChild('tags')
+          .startAt(hashtag.toLowerCase())
+          .endAt(hashtag.toLowerCase() + '\uf8ff')
+          .limitToFirst(_pageSize)
+          .get();
+      
+      if (snapshot.exists) {
+        final Map<dynamic, dynamic> tweetsData = snapshot.value as Map;
+        List<FeedModel> tweets = [];
+        
+        for (var entry in tweetsData.entries) {
+          final tweetData = Map<String, dynamic>.from(entry.value);
+          tweetData['key'] = entry.key.toString();
+          
+          final tweet = FeedModel.fromJson(tweetData);
+          tweets.add(tweet);
+        }
+        
+        _tweetResults = tweets;
+      } else {
+        _tweetResults = [];
+      }
+      
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _error = 'Failed to search tweets by hashtag: $e';
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Search media content
+  Future<void> searchMedia(String query) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+      
+      final snapshot = await kDatabase
+          .child('tweets')
+          .orderByChild('description')
+          .startAt(query.toLowerCase())
+          .endAt(query.toLowerCase() + '\uf8ff')
+          .limitToFirst(_pageSize)
+          .get();
+      
+      if (snapshot.exists) {
+        final Map<dynamic, dynamic> tweetsData = snapshot.value as Map;
+        List<FeedModel> mediaTweets = [];
+        
+        for (var entry in tweetsData.entries) {
+          final tweetData = Map<String, dynamic>.from(entry.value);
+          tweetData['key'] = entry.key.toString();
+          
+          final tweet = FeedModel.fromJson(tweetData);
+          
+          // Only include tweets with media
+          if (tweet.imagePath != null || 
+              tweet.videoPath != null || 
+              tweet.gifUrl != null) {
+            mediaTweets.add(tweet);
+          }
+        }
+        
+        _mediaResults = mediaTweets;
+      } else {
+        _mediaResults = [];
+      }
+      
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _error = 'Failed to search media: $e';
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Search hashtags
+  Future<void> searchHashtags(String query) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+      
+      // This would implement hashtag search logic
+      // For now, return sample hashtags
+      _hashtagResults = [
+        '#flutter',
+        '#dart',
+        '#mobiledev',
+        '#programming',
+        '#tech',
+      ].where((tag) => tag.contains(query.toLowerCase())).toList();
+      
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _error = 'Failed to search hashtags: $e';
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Perform comprehensive search based on current search type
+  Future<void> performSearch(String query) async {
+    if (query.isEmpty) {
+      resetSearch();
+      return;
+    }
+    
+    setQuery(query);
+    
+    switch (_currentSearchType) {
+      case SearchType.users:
+        await searchUsers(query);
+        break;
+      case SearchType.tweets:
+        await searchTweets(query);
+        break;
+      case SearchType.hashtags:
+        await searchHashtags(query);
+        break;
+      case SearchType.media:
+        await searchMedia(query);
+        break;
+      case SearchType.all:
+        await Future.wait([
+          searchUsers(query),
+          searchTweets(query),
+          searchHashtags(query),
+        ]);
+        break;
+    }
+    
+    // Save to search history
+    final resultCount = (_userFilterList?.length ?? 0) + 
+                      (_tweetResults?.length ?? 0) + 
+                      (_hashtagResults?.length ?? 0);
+    await saveSearchToHistory(query, _currentSearchType, resultCount);
+  }
 }
