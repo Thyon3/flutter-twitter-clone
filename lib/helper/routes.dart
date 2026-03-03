@@ -11,6 +11,7 @@ import 'package:twitterclone/ui/page/homePage.dart';
 import 'package:twitterclone/ui/page/message/conversationInformation/conversationInformation.dart';
 import 'package:twitterclone/ui/page/message/newMessagePage.dart';
 import 'package:twitterclone/ui/page/profile/follow/followerListPage.dart';
+import 'package:twitterclone/ui/page/profile/bookmarksPage.dart';
 import 'package:twitterclone/ui/page/search/SearchPage.dart';
 import 'package:twitterclone/ui/page/settings/accountSettings/about/aboutTwitter.dart';
 import 'package:twitterclone/ui/page/settings/accountSettings/accessibility/accessibility.dart';
@@ -40,6 +41,7 @@ class Routes {
   static dynamic route() {
     return {
       'SplashPage': (BuildContext context) => const SplashPage(),
+      'BookmarksPage': (BuildContext context) => const BookmarksPage(),
     };
   }
 
@@ -176,9 +178,9 @@ class Routes {
         return CustomRoute<bool>(
           builder: (BuildContext context) => FollowerListPage(),
         );
-      case "VerifyEmailPage":
+      case "BookmarksPage":
         return CustomRoute<bool>(
-          builder: (BuildContext context) => VerifyEmailPage(),
+          builder: (BuildContext context) => const BookmarksPage(),
         );
       case "ThreadViewPage":
         String threadId = pathElements.length > 2 ? pathElements[2] : '';
