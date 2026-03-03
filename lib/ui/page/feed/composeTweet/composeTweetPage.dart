@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:twitterclone/state/authState.dart';
 import 'package:twitterclone/state/feedState.dart';
 import 'package:twitterclone/state/pollState.dart';
+import 'package:twitterclone/state/gifState.dart';
 import 'package:twitterclone/ui/page/feed/composePoll.dart';
+import 'package:twitterclone/widgets/tweet/gif_picker_widget.dart';
 import 'package:twitterclone/ui/theme/theme.dart';
 import 'package:twitterclone/widgets/customWidgets.dart';
 
@@ -25,6 +27,7 @@ class _ComposeTweetPageState extends State<ComposeTweetPage> {
   final TextEditingController _textController = TextEditingController();
   bool _isPosting = false;
   int _characterCount = 0;
+  String? _selectedGifUrl;
   static const int maxCharacters = 280;
 
   @override
@@ -140,24 +143,81 @@ class _ComposeTweetPageState extends State<ComposeTweetPage> {
                   
                   // Text input
                   Expanded(
-                    child: TextField(
-                      controller: _textController,
-                      maxLines: null,
-                      expands: true,
-                      decoration: const InputDecoration(
-                        hintText: "What's happening?",
-                        hintStyle: TextStyle(
-                          fontSize: 18,
-                          color: Colors.grey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextField(
+                          controller: _textController,
+                          maxLines: null,
+                          expands: false,
+                          decoration: const InputDecoration(
+                            hintText: "What's happening?",
+                            hintStyle: TextStyle(
+                              fontSize: 18,
+                              color: Colors.grey,
+                            ),
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                          ),
+                          style: const TextStyle(
+                            fontSize: 18,
+                            color: Colors.black,
+                          ),
                         ),
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                      ),
-                      style: const TextStyle(
-                        fontSize: 18,
-                        color: Colors.black,
-                      ),
+                        
+                        // Selected GIF preview
+                        if (_selectedGifUrl != null)
+                          Container(
+                            margin: const EdgeInsets.only(top: 12),
+                            child: Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.network(
+                                    _selectedGifUrl!,
+                                    height: 150,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Container(
+                                        height: 150,
+                                        color: Colors.grey.shade200,
+                                        child: const Icon(
+                                          Icons.broken_image,
+                                          color: Colors.grey,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 8,
+                                  right: 8,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedGifUrl = null;
+                                      });
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(4),
+                                      decoration: const BoxDecoration(
+                                        color: Colors.black54,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.close,
+                                        color: Colors.white,
+                                        size: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                   
@@ -310,9 +370,17 @@ class _ComposeTweetPageState extends State<ComposeTweetPage> {
   }
 
   void _addGif() {
-    // TODO: Implement GIF selection
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('GIF selection coming soon!')),
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => GifPickerBottomSheet(
+        onGifSelected: (gif) {
+          setState(() {
+            _selectedGifUrl = gif.displayUrl;
+          });
+        },
+      ),
     );
   }
 
