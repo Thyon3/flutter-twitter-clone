@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:twitterclone/helper/constant.dart';
 import 'package:twitterclone/state/authState.dart';
 import 'package:twitterclone/ui/page/bookmark/bookmarkPage.dart';
+import 'package:twitterclone/ui/page/profile/bookmarksPage.dart';
 import 'package:twitterclone/ui/page/profile/follow/followerListPage.dart';
 import 'package:twitterclone/ui/page/profile/follow/followingListPage.dart';
 import 'package:twitterclone/ui/page/profile/profilePage.dart';
@@ -266,11 +267,11 @@ class _SidebarMenuState extends State<SidebarMenu> {
                         context, ProfilePage.getRoute(profileId: state.userId));
                   }),
                   _menuListRowButton(
-                    'Bookmark',
+                    'Bookmarks',
                     icon: AppIcon.bookmark,
                     isEnable: true,
                     onPressed: () {
-                      Navigator.push(context, BookmarkPage.getRoute());
+                      Navigator.pushNamed(context, '/BookmarksPage');
                     },
                   ),
                   _menuListRowButton('Lists', icon: AppIcon.lists),

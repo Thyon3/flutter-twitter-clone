@@ -8,7 +8,7 @@ class FeedModel {
   String? parentkey;
   String? childRetwetkey;
   String? description;
-  late String userId;
+  late String userId;e
   int? likeCount;
   List<String>? likeList;
   int? commentCount;
