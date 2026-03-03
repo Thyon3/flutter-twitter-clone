@@ -530,3 +530,143 @@ extension ModerationPriorityExtension on ModerationPriority {
     }
   }
 }
+
+class ContentReport {
+  final String id;
+  final String reporterId;
+  final String reportedUserId;
+  final String contentId;
+  final ContentType contentType;
+  final ReportReason reason;
+  final String? description;
+  final ModerationSeverity severity;
+  final ModerationStatus status;
+  final ModerationPriority priority;
+  final DateTime createdAt;
+  final DateTime? reviewedAt;
+  final String? reviewedBy;
+  final ModerationAction? actionTaken;
+  final String? actionReason;
+  final bool isAnonymous;
+  final List<String> evidenceUrls;
+  final Map<String, dynamic> metadata;
+  final int reportCount;
+  final List<String> additionalReporters;
+  
+  ContentReport({
+    required this.id,
+    required this.reporterId,
+    required this.reportedUserId,
+    required this.contentId,
+    required this.contentType,
+    required this.reason,
+    this.description,
+    required this.severity,
+    this.status = ModerationStatus.pending,
+    this.priority = ModerationPriority.normal,
+    required this.createdAt,
+    this.reviewedAt,
+    this.reviewedBy,
+    this.actionTaken,
+    this.actionReason,
+    this.isAnonymous = false,
+    this.evidenceUrls = const [],
+    this.metadata = const {},
+    this.reportCount = 1,
+    this.additionalReporters = const [],
+  });
+  
+  factory ContentReport.fromJson(Map<String, dynamic> json) {
+    return ContentReport(
+      id: json['id'],
+      reporterId: json['reporterId'],
+      reportedUserId: json['reportedUserId'],
+      contentId: json['contentId'],
+      contentType: ContentTypeExtension.fromString(json['contentType']),
+      reason: ReportReasonExtension.fromString(json['reason']),
+      description: json['description'],
+      severity: ModerationSeverityExtension.fromString(json['severity']),
+      status: ModerationStatusExtension.fromString(json['status']),
+      priority: ModerationPriorityExtension.fromString(json['priority']),
+      createdAt: DateTime.parse(json['createdAt']),
+      reviewedAt: json['reviewedAt'] != null ? DateTime.parse(json['reviewedAt']) : null,
+      reviewedBy: json['reviewedBy'],
+      actionTaken: json['actionTaken'] != null ? ModerationActionExtension.fromString(json['actionTaken']) : null,
+      actionReason: json['actionReason'],
+      isAnonymous: json['isAnonymous'] ?? false,
+      evidenceUrls: List<String>.from(json['evidenceUrls'] ?? []),
+      metadata: json['metadata'] ?? {},
+      reportCount: json['reportCount'] ?? 1,
+      additionalReporters: List<String>.from(json['additionalReporters'] ?? []),
+    );
+  }
+  
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'reporterId': reporterId,
+      'reportedUserId': reportedUserId,
+      'contentId': contentId,
+      'contentType': contentType.name,
+      'reason': reason.name,
+      'description': description,
+      'severity': severity.name,
+      'status': status.name,
+      'priority': priority.name,
+      'createdAt': createdAt.toIso8601String(),
+      'reviewedAt': reviewedAt?.toIso8601String(),
+      'reviewedBy': reviewedBy,
+      'actionTaken': actionTaken?.name,
+      'actionReason': actionReason,
+      'isAnonymous': isAnonymous,
+      'evidenceUrls': evidenceUrls,
+      'metadata': metadata,
+      'reportCount': reportCount,
+      'additionalReporters': additionalReporters,
+    };
+  }
+  
+  bool get isReviewed => status != ModerationStatus.pending && status != ModerationStatus.underReview;
+  
+  bool get isUrgent => priority == ModerationPriority.urgent;
+  
+  bool get isHighSeverity => severity == ModerationSeverity.high || severity == ModerationSeverity.critical;
+  
+  String get timeAgo {
+    final now = DateTime.now();
+    final difference = now.difference(createdAt);
+    
+    if (difference.inMinutes < 1) {
+      return 'Just now';
+    } else if (difference.inHours < 1) {
+      return '${difference.inMinutes}m ago';
+    } else if (difference.inDays < 1) {
+      return '${difference.inHours}h ago';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays}d ago';
+    } else {
+      return '${(difference.inDays / 7).floor()}w ago';
+    }
+  }
+  
+  void addReporter(String reporterId) {
+    if (!additionalReporters.contains(reporterId) && reporterId != this.reporterId) {
+      additionalReporters.add(reporterId);
+      reportCount++;
+    }
+  }
+  
+  void updateStatus(ModerationStatus newStatus, String? reviewerId) {
+    status = newStatus;
+    reviewedBy = reviewerId;
+    reviewedAt = DateTime.now();
+  }
+  
+  void takeAction(ModerationAction action, String? reason, String? moderatorId) {
+    actionTaken = action;
+    actionReason = reason;
+    reviewedBy = moderatorId;
+    reviewedAt = DateTime.now();
+    status = ModerationStatus.approved;
+  }
+}
