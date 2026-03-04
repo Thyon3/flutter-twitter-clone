@@ -566,3 +566,131 @@ extension SecurityActionExtension on SecurityAction {
     }
   }
 }
+
+class SecurityEvent {
+  final String id;
+  final String userId;
+  final SecurityEventType eventType;
+  final SecurityLevel severity;
+  final String? description;
+  final DateTime timestamp;
+  final String? ipAddress;
+  final String? userAgent;
+  final String? deviceId;
+  final String? location;
+  final Map<String, dynamic> metadata;
+  final bool isResolved;
+  final String? resolvedBy;
+  final DateTime? resolvedAt;
+  final List<String> tags;
+  final SecurityAction? actionTaken;
+  final String? actionReason;
+  
+  SecurityEvent({
+    required this.id,
+    required this.userId,
+    required this.eventType,
+    required this.severity,
+    this.description,
+    required this.timestamp,
+    this.ipAddress,
+    this.userAgent,
+    this.deviceId,
+    this.location,
+    this.metadata = const {},
+    this.isResolved = false,
+    this.resolvedBy,
+    this.resolvedAt,
+    this.tags = const [],
+    this.actionTaken,
+    this.actionReason,
+  });
+  
+  factory SecurityEvent.fromJson(Map<String, dynamic> json) {
+    return SecurityEvent(
+      id: json['id'],
+      userId: json['userId'],
+      eventType: SecurityEventTypeExtension.fromString(json['eventType']),
+      severity: SecurityLevelExtension.fromString(json['severity']),
+      description: json['description'],
+      timestamp: DateTime.parse(json['timestamp']),
+      ipAddress: json['ipAddress'],
+      userAgent: json['userAgent'],
+      deviceId: json['deviceId'],
+      location: json['location'],
+      metadata: json['metadata'] ?? {},
+      isResolved: json['isResolved'] ?? false,
+      resolvedBy: json['resolvedBy'],
+      resolvedAt: json['resolvedAt'] != null ? DateTime.parse(json['resolvedAt']) : null,
+      tags: List<String>.from(json['tags'] ?? []),
+      actionTaken: json['actionTaken'] != null ? SecurityActionExtension.fromString(json['actionTaken']) : null,
+      actionReason: json['actionReason'],
+    );
+  }
+  
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'userId': userId,
+      'eventType': eventType.name,
+      'severity': severity.name,
+      'description': description,
+      'timestamp': timestamp.toIso8601String(),
+      'ipAddress': ipAddress,
+      'userAgent': userAgent,
+      'deviceId': deviceId,
+      'location': location,
+      'metadata': metadata,
+      'isResolved': isResolved,
+      'resolvedBy': resolvedBy,
+      'resolvedAt': resolvedAt?.toIso8601String(),
+      'tags': tags,
+      'actionTaken': actionTaken?.name,
+      'actionReason': actionReason,
+    };
+  }
+  
+  bool get isCritical => severity == SecurityLevel.critical;
+  
+  bool get isHighRisk => severity == SecurityLevel.high || severity == SecurityLevel.critical;
+  
+  bool get isRecent {
+    final now = DateTime.now();
+    return now.difference(timestamp).inHours < 24;
+  }
+  
+  String get timeAgo {
+    final now = DateTime.now();
+    final difference = now.difference(timestamp);
+    
+    if (difference.inMinutes < 1) {
+      return 'Just now';
+    } else if (difference.inHours < 1) {
+      return '${difference.inMinutes}m ago';
+    } else if (difference.inDays < 1) {
+      return '${difference.inHours}h ago';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays}d ago';
+    } else {
+      return '${(difference.inDays / 7).floor()}w ago';
+    }
+  }
+  
+  void resolve(String resolvedBy, SecurityAction action, String? reason) {
+    isResolved = true;
+    this.resolvedBy = resolvedBy;
+    resolvedAt = DateTime.now();
+    actionTaken = action;
+    actionReason = reason;
+  }
+  
+  void addTag(String tag) {
+    if (!tags.contains(tag)) {
+      tags.add(tag);
+    }
+  }
+  
+  bool hasTag(String tag) {
+    return tags.contains(tag);
+  }
+}
